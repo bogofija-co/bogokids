@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Bogo Kids Bici Kids - Bogofija</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root{
+    --sky:#7FD8F7;
+    --sky-deep:#4CB8E8;
+    --grass:#7ED957;
+    --grass-dark:#4CAF50;
+    --dirt:#C68642;
+    --dirt-dark:#8B5A2B;
+    --stone:#6FA8DC;
+    --stone-dark:#4A7FB5;
+    --night:#2D2A6E;
+    --night-2:#3E3A8C;
+    --gold:#FFD23F;
+    --gold-dark:#F4A300;
+    --gem:#3FE0C5;
+    --danger:#FF6B6B;
+    --paper:#FFF6E0;
+    --px: 'Baloo 2', 'Nunito', system-ui, sans-serif;
+    --body: 'Nunito', 'Trebuchet MS', system-ui, sans-serif;
+  }
+
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{height:auto; min-height:100%;}
+  body{
+    margin:0;
+    font-family:var(--body);
+    background:var(--night);
+    color:#fff;
+    overflow-x:hidden;
+    overflow-y:auto;
+    user-select:none;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+
+  /* ---------- marco del juego ---------- */
+  #game{
+    position:relative;
+    width:100%; height:100vh; max-height:900px;
+    max-width:520px;
+    background:
+      linear-gradient(180deg, var(--sky) 0%, var(--sky-deep) 55%, var(--grass) 55%, var(--grass-dark) 100%);
+    overflow:hidden;
+    display:flex; flex-direction:column;
+    flex:0 0 auto;
+  }
+  #game::after{ /* textura de bloques sutil */
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background-image:
+      linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,.05) 1px, transparent 1px);
+    background-size:32px 32px;
+    opacity:.5;
+  }
+
+  .screen{
+    position:absolute; inset:0;
+    display:none; flex-direction:column;
+    padding:16px;
+    z-index:2;
+    overflow-y:auto;
+  }
+  .screen.active{display:flex;}
+
+  /* ---------- bloque base ---------- */
+  .block{
+    border:none;
+    border-radius:4px;
+    box-shadow:
+      inset 4px 4px 0 rgba(255,255,255,.35),
+      inset -4px -4px 0 rgba(0,0,0,.35),
+      0 6px 0 rgba(0,0,0,.35);
+    cursor:pointer;
+    transition:transform .07s;
+    font-family:var(--body);
+    font-weight:900;
+    color:#fff;
+    text-shadow:2px 2px 0 rgba(0,0,0,.35);
+  }
+  .block:active{transform:translateY(4px); box-shadow:
+      inset 4px 4px 0 rgba(255,255,255,.3),
+      inset -4px -4px 0 rgba(0,0,0,.3),
+      0 2px 0 rgba(0,0,0,.35);}
+  .block:focus-visible{outline:4px solid #fff; outline-offset:3px;}
+
+  /* ---------- HOME ---------- */
+  #home{align-items:center; justify-content:center; gap:22px; text-align:center;}
+  .logo{
+    font-family:var(--px);
+    font-size:clamp(16px,5.4vw,26px);
+    line-height:1.7;
+    color:var(--gold);
+    text-shadow:4px 4px 0 var(--dirt-dark), 8px 8px 0 rgba(0,0,0,.25);
+    letter-spacing:1px;
+  }
+  .logo small{display:block; font-size:.5em; color:#fff; text-shadow:3px 3px 0 rgba(0,0,0,.4); margin-top:12px;}
+  .hero-guy{font-size:76px; filter:drop-shadow(0 8px 0 rgba(0,0,0,.25)); animation:bob 1.6s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+  .deco-row{font-size:22px; opacity:.55; letter-spacing:6px; pointer-events:none;}
+
+  .btn-big{
+    background:var(--grass);
+    padding:20px 34px;
+    font-size:24px;
+    display:flex; align-items:center; gap:12px;
+  }
+  .btn-sec{background:var(--stone); padding:14px 22px; font-size:17px;}
+
+  /* ---------- barra superior ---------- */
+  .topbar{
+    display:flex; align-items:center; gap:8px; margin-bottom:14px; flex:0 0 auto;
+  }
+  .pill{
+    background:rgba(0,0,0,.45); border-radius:999px; padding:8px 14px;
+    font-weight:900; font-size:16px; display:flex; align-items:center; gap:6px;
+    box-shadow:inset 0 2px 0 rgba(255,255,255,.12);
+  }
+  .icon-btn{
+    width:46px; height:46px; background:var(--stone); font-size:20px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .spacer{flex:1;}
+
+  /* ---------- MAPA ---------- */
+  #map .title{font-family:var(--px); font-size:13px; text-align:center; margin:2px 0 16px; text-shadow:3px 3px 0 rgba(0,0,0,.4);}
+  .biomes{display:flex; flex-direction:column; gap:14px; padding-bottom:20px;}
+  .biome{
+    display:flex; align-items:center; gap:14px;
+    padding:14px; text-align:left;
+    position:relative;
+  }
+  .biome .face{
+    width:64px; height:64px; flex:0 0 auto;
+    display:flex; align-items:center; justify-content:center;
+    font-size:34px; border-radius:4px;
+    background:rgba(0,0,0,.28);
+    box-shadow:inset 3px 3px 0 rgba(255,255,255,.18), inset -3px -3px 0 rgba(0,0,0,.3);
+  }
+  .biome .info{flex:1; min-width:0;}
+  .biome .nm{font-size:19px; font-weight:900;}
+  .biome .sub{font-size:13px; opacity:.9; font-weight:800;}
+  .stars{font-size:17px; letter-spacing:2px; margin-top:4px;}
+  .biome.locked{filter:grayscale(.85) brightness(.65); cursor:not-allowed;}
+  .biome.locked .face::after{content:'🔒'; position:absolute; font-size:26px;}
+  .biome.locked .face span{opacity:.15;}
+
+  /* ---------- JUGAR ---------- */
+  #play{padding:14px;}
+  .progress{display:flex; gap:4px; margin-bottom:10px; flex:0 0 auto;}
+  .pblock{flex:1; height:12px; background:rgba(0,0,0,.4); border-radius:2px;
+    box-shadow:inset 0 2px 0 rgba(255,255,255,.08);}
+  .pblock.done{background:var(--gold); box-shadow:inset 2px 2px 0 rgba(255,255,255,.5), inset -2px -2px 0 rgba(0,0,0,.25);}
+
+  .stage{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; min-height:0;}
+
+  .oreblock{
+    width:min(64vw,220px); height:min(64vw,220px);
+    background:var(--stone);
+    border-radius:6px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:min(30vw,104px);
+    position:relative;
+    box-shadow:
+      inset 6px 6px 0 rgba(255,255,255,.28),
+      inset -6px -6px 0 rgba(0,0,0,.35),
+      0 10px 0 rgba(0,0,0,.3);
+  }
+  .oreblock .word{font-family:var(--px); font-size:min(7vw,26px); color:#fff; text-shadow:3px 3px 0 rgba(0,0,0,.45); text-align:center; padding:0 8px; line-height:1.6;}
+  .oreblock.shake{animation:shake .3s;}
+  @keyframes shake{0%,100%{transform:translate(0,0)}25%{transform:translate(-8px,2px)}50%{transform:translate(7px,-3px)}75%{transform:translate(-5px,3px)}}
+  .oreblock.pop{animation:pop .35s forwards;}
+  @keyframes pop{to{transform:scale(1.35); opacity:0;}}
+
+  .speaker{
+    background:var(--gold); width:96px; height:96px; font-size:44px;
+    display:flex; align-items:center; justify-content:center; margin:0 auto;
+  }
+  .hint{font-size:15px; font-weight:900; opacity:.9; text-shadow:1px 1px 0 rgba(0,0,0,.4); display:flex; gap:8px; align-items:center;}
+
+  .options{
+    display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%;
+    flex:0 0 auto; padding-bottom:6px;
+  }
+  .opt{
+    background:var(--dirt); padding:16px 8px; font-size:20px; min-height:70px;
+    display:flex; align-items:center; justify-content:center; word-break:break-word;
+  }
+  .opt.emoji{font-size:44px;}
+  .opt.ok{background:var(--grass);}
+  .opt.bad{background:var(--danger);}
+  .opt[disabled]{cursor:default;}
+
+  /* frases */
+  .slots{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; min-height:60px; align-items:center;}
+  .slot{
+    min-width:74px; height:56px; border-radius:4px;
+    background:rgba(0,0,0,.35);
+    box-shadow:inset 0 0 0 4px rgba(255,255,255,.18);
+    display:flex; align-items:center; justify-content:center;
+    font-weight:900; font-size:19px;
+  }
+  .slot.filled{background:var(--grass); box-shadow:inset 3px 3px 0 rgba(255,255,255,.3), inset -3px -3px 0 rgba(0,0,0,.3);}
+  .tiles{display:flex; gap:8px; flex-wrap:wrap; justify-content:center;}
+  .tile{background:var(--dirt); padding:14px 16px; font-size:19px;}
+  .tile.used{visibility:hidden;}
+
+  /* ---------- FEEDBACK ---------- */
+  #fx{position:absolute; inset:0; pointer-events:none; z-index:9; overflow:hidden;}
+  .particle{position:absolute; width:14px; height:14px; border-radius:2px; animation:fly .7s ease-out forwards;}
+  @keyframes fly{to{transform:translate(var(--dx),var(--dy)) rotate(220deg); opacity:0;}}
+  .floater{
+    position:absolute; font-family:var(--px); font-size:18px; color:var(--gold);
+    text-shadow:3px 3px 0 rgba(0,0,0,.5); animation:rise 1s ease-out forwards; white-space:nowrap;
+  }
+  @keyframes rise{to{transform:translateY(-90px); opacity:0;}}
+
+  /* ---------- MODAL ---------- */
+  .modal{
+    position:absolute; inset:0; z-index:20;
+    background:rgba(20,16,28,.82);
+    display:none; align-items:center; justify-content:center; padding:20px;
+  }
+  .modal.active{display:flex;}
+  .card{
+    background:var(--night-2); border-radius:6px; padding:26px 20px; width:100%; max-width:380px;
+    text-align:center;
+    box-shadow:inset 5px 5px 0 rgba(255,255,255,.12), inset -5px -5px 0 rgba(0,0,0,.4), 0 10px 0 rgba(0,0,0,.4);
+    animation:drop .35s cubic-bezier(.2,1.5,.5,1);
+  }
+  @keyframes drop{from{transform:translateY(-60px) scale(.85); opacity:0;}}
+  .card h2{font-family:var(--px); font-size:15px; margin:0 0 16px; color:var(--gold); line-height:1.7;}
+  .big-stars{font-size:44px; letter-spacing:6px; margin:6px 0 14px;}
+  .card .row{display:flex; gap:10px; justify-content:center; margin-top:20px; flex-wrap:wrap;}
+
+  /* ---------- COLECCIÓN ---------- */
+  .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; padding-bottom:20px;}
+  .char{
+    background:rgba(0,0,0,.3); border-radius:4px; padding:14px 6px; text-align:center;
+    box-shadow:inset 3px 3px 0 rgba(255,255,255,.14), inset -3px -3px 0 rgba(0,0,0,.3);
+  }
+  .char .em{font-size:42px;}
+  .char .cn{font-size:12px; font-weight:900; margin-top:6px;}
+  .char.lock{filter:grayscale(1) brightness(.5);}
+  .char.lock .em::after{content:'';}
+  .char .need{font-size:11px; font-weight:900; color:var(--gold);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+  @media (max-height:680px){
+    .oreblock{width:150px;height:150px;font-size:70px;}
+    .hero-guy{font-size:58px;}
+  }
+</style>
+</head>
+<body>
+<div id="game">
+
+  <!-- ===== HOME ===== -->
+  <section id="home" class="screen active">
+    <div class="deco-row" aria-hidden="true">🌳 🌸 🚲 🌸 🌳</div>
+    <div class="hero-guy">🚵</div>
+    <div class="logo">BOGO<br>KIDS<small>FAMILIA BOGO · Learn English</small></div>
+    <button class="block btn-big" id="btn-play">▶ PEDALEAR</button>
+    <button class="block btn-sec" id="btn-chars-home">🎁 Mis compañeros</button>
+  </section>
+
+  <!-- ===== MAPA ===== -->
+  <section id="map" class="screen">
+    <div class="topbar">
+      <button class="block icon-btn" id="map-home">🏠</button>
+      <div class="spacer"></div>
+      <div class="pill">💎 <span id="gems-map">0</span></div>
+      <button class="block icon-btn" id="btn-chars">🎁</button>
+    </div>
+    <div class="title">ELEGÍ UNA RUTA</div>
+    <div class="biomes" id="biomes"></div>
+  </section>
+
+  <!-- ===== JUGAR ===== -->
+  <section id="play" class="screen">
+    <div class="topbar">
+      <button class="block icon-btn" id="play-back">⬅</button>
+      <div class="pill">💎 <span id="gems-play">0</span></div>
+      <div class="pill" id="streak-pill" style="display:none">🔥 <span id="streak">0</span></div>
+      <div class="spacer"></div>
+      <button class="block icon-btn" id="btn-repeat">🔊</button>
+    </div>
+    <div class="progress" id="progress"></div>
+    <div class="stage" id="stage"></div>
+    <div class="options" id="options"></div>
+  </section>
+
+  <!-- ===== COLECCIÓN ===== -->
+  <section id="chars" class="screen">
+    <div class="topbar">
+      <button class="block icon-btn" id="chars-back">⬅</button>
+      <div class="spacer"></div>
+      <div class="pill">💎 <span id="gems-chars">0</span></div>
+    </div>
+    <div class="title" style="font-family:var(--px);font-size:12px;text-align:center;margin:2px 0 16px;">MIS COMPAÑEROS DE RUTA</div>
+    <div class="grid" id="chargrid"></div>
+  </section>
+
+  <div id="fx"></div>
+
+  <!-- ===== MODALES ===== -->
+  <div class="modal" id="modal">
+    <div class="card" id="modal-card"></div>
+  </div>
+
+</div>
+
+<script>
+(() => {
+"use strict";
+
+/* =========================================================
+   CONTENIDO
+   ========================================================= */
+const LEVELS = [
+  {
+    id:1, name:'Sendero del Bosque', sub:'Mi primera rodada', icon:'🌲', color:'#5EBB4A',
+    modes:['img2word'],
+    words:[
+      {en:'helmet',   em:'⛑️'}, {en:'bicycle', em:'🚲'}, {en:'bell',    em:'🔔'},
+      {en:'water',    em:'💧'}, {en:'medal',   em:'🏅'}, {en:'trophy',  em:'🏆'},
+      {en:'wheel',    em:'🛞'}, {en:'chain',   em:'⛓️'}, {en:'lock',    em:'🔒'},
+      {en:'light',    em:'🔦'}, {en:'backpack',em:'🎒'}, {en:'flag',    em:'🚩'}
+    ]
+  },
+  {
+    id:2, name:'Calles y Ciclovías', sub:'La ciudad en bici', icon:'🏙️', color:'#4CB8E8',
+    modes:['audio2img','img2word'],
+    words:[
+      {en:'bike', em:'🚲'}, {en:'car', em:'🚗'}, {en:'bus', em:'🚌'},
+      {en:'street', em:'🛣️'}, {en:'bridge', em:'🌉'}, {en:'sign', em:'🚸'},
+      {en:'light', em:'🚦'}, {en:'tree', em:'🌳'}, {en:'dog', em:'🐶'},
+      {en:'friend', em:'🧑‍🤝‍🧑'}, {en:'park', em:'🏞️'}, {en:'ball', em:'⚽'}
+    ]
+  },
+  {
+    id:3, name:'Montaña', sub:'Naturaleza y aventura', icon:'⛰️', color:'#C68642',
+    modes:['word2img','audio2img'],
+    words:[
+      {en:'mountain', em:'⛰️'}, {en:'rock', em:'🪨'}, {en:'forest', em:'🌲'},
+      {en:'sun', em:'☀️'}, {en:'rain', em:'🌧️'}, {en:'flower', em:'🌸'},
+      {en:'butterfly', em:'🦋'}, {en:'bird', em:'🐦'}, {en:'squirrel', em:'🐿️'},
+      {en:'deer', em:'🦌'}, {en:'river', em:'🌊'}, {en:'cloud', em:'☁️'}
+    ]
+  },
+  {
+    id:4, name:'Pista Velodromo', sub:'Acciones y frases', icon:'🏁', color:'#3E3A8C',
+    modes:['sentence'],
+    words:[
+      {en:'ride', em:'🚴'}, {en:'race', em:'🏁'}, {en:'brake', em:'🛑'},
+      {en:'turn', em:'↩️'}, {en:'jump', em:'🤸'}, {en:'climb', em:'🧗'},
+      {en:'wave', em:'👋'}, {en:'smile', em:'😊'}, {en:'drink', em:'🥤'},
+      {en:'rest', em:'🛌'}, {en:'win', em:'🏆'}, {en:'ring', em:'🔔'}
+    ],
+    sentences:[
+      {w:['I','ride','my','bike'], em:'🚴🚲'},
+      {w:['I','wear','a','helmet'], em:'🚴⛑️'},
+      {w:['I','ring','the','bell'], em:'🚴🔔'},
+      {w:['I','drink','water'], em:'🚴💧'},
+      {w:['the','bird','flies'], em:'🐦'},
+      {w:['I','climb','the','mountain'], em:'🧗⛰️'},
+      {w:['I','win','the','race'], em:'🚴🏆'},
+      {w:['we','ride','together'], em:'🧑‍🤝‍🧑🚲'},
+      {w:['I','stop','at','the','sign'], em:'🚸🛑'},
+      {w:['the','sun','shines'], em:'☀️'},
+      {w:['I','cross','the','bridge'], em:'🚴🌉'},
+      {w:['I','love','my','bicycle'], em:'🚲💛'}
+    ]
+  },
+  {
+    id:5, name:'Gran Copa Bogofija', sub:'¡Repaso de todo!', icon:'🏆', color:'#FFD23F',
+    modes:['img2word','audio2img','word2img'],
+    review:true,
+    words:[
+      {en:'helmet', em:'⛑️'}, {en:'bicycle', em:'🚲'}, {en:'bell', em:'🔔'},
+      {en:'medal', em:'🏅'}, {en:'mountain', em:'⛰️'}, {en:'sun', em:'☀️'},
+      {en:'bird', em:'🐦'}, {en:'tree', em:'🌳'}, {en:'ride', em:'🚴'},
+      {en:'race', em:'🏁'}, {en:'water', em:'💧'}, {en:'trophy', em:'🏆'}
+    ]
+  }
+];
+
+const CHARACTERS = [
+  {em:'🚴', name:'Explorador',      cost:0},
+  {em:'🐇', name:'Conejo Veloz',    cost:15},
+  {em:'🦊', name:'Zorro Ciclista',  cost:30},
+  {em:'🐿️', name:'Ardilla Trail',   cost:45},
+  {em:'🦉', name:'Búho Nocturno',   cost:60},
+  {em:'🦌', name:'Venado Montañés', cost:75},
+  {em:'🐻', name:'Oso Aventurero',  cost:90},
+  {em:'🦅', name:'Águila Campeona', cost:110},
+  {em:'🏆', name:'Campeón BOGO',    cost:140}
+];
+
+/* =========================================================
+   ESTADO + GUARDADO
+   ========================================================= */
+let S = { gems:0, stars:{}, seen:[] };
+
+async function load(){
+  try{
+    const r = await window.storage.get('bwe-save');
+    if(r && r.value) S = Object.assign(S, JSON.parse(r.value));
+  }catch(e){ /* primera partida o sin storage: seguimos en memoria */ }
+  render();
+}
+async function save(){
+  try{ await window.storage.set('bwe-save', JSON.stringify(S)); }catch(e){}
+}
+
+/* =========================================================
+   UTILIDADES
+   ========================================================= */
+const $ = s => document.querySelector(s);
+const shuffle = a => a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(v=>v[1]);
+const show = id => {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  $('#'+id).classList.add('active');
+};
+
+/* ---- voz ---- */
+let voice = null;
+function pickVoice(){
+  const vs = speechSynthesis.getVoices();
+  voice = vs.find(v=>/en[-_]US/i.test(v.lang)) || vs.find(v=>/^en/i.test(v.lang)) || null;
+}
+if('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+function say(text){
+  if(!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US'; u.rate = .8; u.pitch = 1.05;
+  if(voice) u.voice = voice;
+  speechSynthesis.speak(u);
+}
+
+/* ---- sonidos ---- */
+let ac = null;
+function beep(freqs, dur=.09){
+  try{
+    ac = ac || new (window.AudioContext||window.webkitAudioContext)();
+    freqs.forEach((f,i)=>{
+      const o = ac.createOscillator(), g = ac.createGain();
+      o.type='square'; o.frequency.value=f;
+      g.gain.value=.05;
+      o.connect(g); g.connect(ac.destination);
+      const t = ac.currentTime + i*dur;
+      o.start(t); g.gain.setValueAtTime(.05,t);
+      g.gain.exponentialRampToValueAtTime(.001, t+dur);
+      o.stop(t+dur);
+    });
+  }catch(e){}
+}
+
+/* ---- efectos ---- */
+function burst(el, color){
+  const fx = $('#fx'), r = el.getBoundingClientRect(), g = $('#game').getBoundingClientRect();
+  for(let i=0;i<18;i++){
+    const p = document.createElement('div');
+    p.className='particle';
+    p.style.background = color;
+    p.style.left = (r.left - g.left + r.width/2) + 'px';
+    p.style.top  = (r.top  - g.top  + r.height/2) + 'px';
+    p.style.setProperty('--dx', (Math.random()*220-110)+'px');
+    p.style.setProperty('--dy', (Math.random()*220-110)+'px');
+    fx.appendChild(p);
+    setTimeout(()=>p.remove(), 750);
+  }
+}
+function floater(text){
+  const fx = $('#fx'), d = document.createElement('div');
+  d.className='floater'; d.textContent=text;
+  d.style.left='50%'; d.style.top='45%'; d.style.transform='translateX(-50%)';
+  fx.appendChild(d);
+  setTimeout(()=>d.remove(), 1000);
+}
+
+/* =========================================================
+   RENDER: mapa + personajes
+   ========================================================= */
+function unlockedCount(){ return CHARACTERS.filter(c=>S.gems>=c.cost).length; }
+
+function render(){
+  ['#gems-map','#gems-play','#gems-chars'].forEach(s=>$(s).textContent = S.gems);
+
+  // mapa
+  const box = $('#biomes'); box.innerHTML='';
+  LEVELS.forEach((L,i)=>{
+    const prev = i===0 ? true : (S.stars[LEVELS[i-1].id] > 0);
+    const st = S.stars[L.id]||0;
+    const b = document.createElement('button');
+    b.className = 'block biome' + (prev?'':' locked');
+    b.style.background = L.color;
+    b.innerHTML = `
+      <div class="face"><span>${L.icon}</span></div>
+      <div class="info">
+        <div class="nm">${L.name}</div>
+        <div class="sub">${L.sub}</div>
+        <div class="stars">${'⭐'.repeat(st)}${'▫️'.repeat(3-st)}</div>
+      </div>`;
+    if(prev) b.onclick = ()=>startLevel(L);
+    box.appendChild(b);
+  });
+
+  // personajes
+  const g = $('#chargrid'); g.innerHTML='';
+  CHARACTERS.forEach(c=>{
+    const on = S.gems >= c.cost;
+    const d = document.createElement('div');
+    d.className = 'char' + (on?'':' lock');
+    d.innerHTML = `<div class="em">${on?c.em:'❓'}</div>
+      <div class="cn">${on?c.name:'???'}</div>
+      ${on?'':`<div class="need">💎 ${c.cost}</div>`}`;
+    if(on) d.onclick = ()=>{ say(c.name); beep([600,900]); };
+    g.appendChild(d);
+  });
+}
+
+/* =========================================================
+   MOTOR DE PREGUNTAS
+   ========================================================= */
+let game = null;
+
+function buildQueue(L){
+  const q = [];
+  if(L.modes.includes('sentence')){
+    shuffle(L.sentences).forEach(s => q.push({type:'sentence', data:s}));
+    return q;
+  }
+  shuffle(L.words).forEach((w,i)=>{
+    const mode = L.modes[i % L.modes.length];
+    const pool = shuffle(L.words.filter(x=>x.en!==w.en)).slice(0,2);
+    q.push({type:mode, word:w, opts:shuffle([w, ...pool])});
+  });
+  return q;
+}
+
+function startLevel(L){
+  game = { L, queue:buildQueue(L), correct:0, errors:0, streak:0, total:12, current:null };
+  $('#streak-pill').style.display='none';
+  show('play');
+  next();
+}
+
+function next(){
+  if(game.correct >= game.total){ return finish(); }
+  game.current = game.queue.shift();
+  drawProgress();
+  drawQuestion();
+}
+
+function drawProgress(){
+  const p = $('#progress'); p.innerHTML='';
+  for(let i=0;i<game.total;i++){
+    const d = document.createElement('div');
+    d.className = 'pblock' + (i<game.correct?' done':'');
+    p.appendChild(d);
+  }
+}
+
+function drawQuestion(){
+  const st = $('#stage'), op = $('#options');
+  st.innerHTML=''; op.innerHTML=''; op.style.display='grid';
+  const q = game.current;
+
+  if(q.type==='sentence') return drawSentence(q);
+
+  const ore = document.createElement('div');
+  ore.className='oreblock';
+  ore.style.background = game.L.color;
+
+  if(q.type==='img2word'){
+    ore.textContent = q.word.em;
+    st.appendChild(ore);
+    st.appendChild(hint('👆','Tocá la palabra correcta'));
+    q.opts.forEach(o => op.appendChild(mkOpt(o.en, false, o.en===q.word.en, ore)));
+    say(q.word.en);
+  }
+  else if(q.type==='word2img'){
+    ore.innerHTML = `<div class="word">${q.word.en}</div>`;
+    st.appendChild(ore);
+    st.appendChild(hint('👆','Tocá el dibujo correcto'));
+    q.opts.forEach(o => op.appendChild(mkOpt(o.em, true, o.en===q.word.en, ore)));
+    say(q.word.en);
+  }
+  else if(q.type==='audio2img'){
+    const sp = document.createElement('button');
+    sp.className='block speaker'; sp.textContent='🔊';
+    sp.onclick = ()=>say(q.word.en);
+    ore.appendChild(sp);
+    st.appendChild(ore);
+    st.appendChild(hint('👂','Escuchá y elegí'));
+    q.opts.forEach(o => op.appendChild(mkOpt(o.em, true, o.en===q.word.en, ore)));
+    say(q.word.en);
+  }
+}
+
+function hint(icon, text){
+  const d = document.createElement('div');
+  d.className='hint'; d.innerHTML = `<span style="font-size:22px">${icon}</span> ${text}`;
+  return d;
+}
+
+function mkOpt(label, isEmoji, isRight, ore){
+  const b = document.createElement('button');
+  b.className = 'block opt' + (isEmoji?' emoji':'');
+  b.textContent = label;
+  b.onclick = ()=>answer(b, isRight, ore);
+  return b;
+}
+
+function answer(btn, right, ore){
+  document.querySelectorAll('.opt').forEach(o=>{ o.disabled=true; o.onclick=null; });
+  if(right){
+    btn.classList.add('ok');
+    win(ore);
+  }else{
+    btn.classList.add('bad');
+    ore.classList.add('shake');
+    beep([220,150], .14);
+    // mostrar la correcta en verde
+    const q = game.current;
+    document.querySelectorAll('.opt').forEach(o=>{
+      const target = (q.type==='img2word') ? q.word.en : q.word.em;
+      if(o.textContent === target){ o.classList.add('ok'); }
+    });
+    say(q.word.en);
+    game.errors++; game.streak = 0; $('#streak-pill').style.display='none';
+    game.queue.push(q); // vuelve a aparecer para practicar
+    setTimeout(next, 1900);
+  }
+}
+
+/* ---- frases (nivel 4) ---- */
+function drawSentence(q){
+  const st = $('#stage'), op = $('#options');
+  op.style.display='none';
+  const target = q.data.w;
+  let built = [];
+
+  const ore = document.createElement('div');
+  ore.className='oreblock';
+  ore.style.background = game.L.color;
+  ore.style.width='auto'; ore.style.padding='0 26px'; ore.style.height='150px';
+  ore.textContent = q.data.em;
+  st.appendChild(ore);
+
+  const sp = document.createElement('button');
+  sp.className='block btn-sec'; sp.textContent='🔊 Escuchar';
+  sp.onclick = ()=>say(target.join(' '));
+  st.appendChild(sp);
+
+  const slots = document.createElement('div'); slots.className='slots';
+  const tiles = document.createElement('div'); tiles.className='tiles';
+  st.appendChild(slots); st.appendChild(tiles);
+
+  function paint(){
+    slots.innerHTML='';
+    target.forEach((w,i)=>{
+      const s = document.createElement('div');
+      s.className='slot' + (built[i]?' filled':'');
+      s.textContent = built[i]||'';
+      slots.appendChild(s);
+    });
+  }
+  paint();
+
+  shuffle(target.map((w,i)=>({w,i}))).forEach(t=>{
+    const b = document.createElement('button');
+    b.className='block tile'; b.textContent=t.w;
+    b.onclick = ()=>{
+      const pos = built.length;
+      if(t.w === target[pos]){
+        built.push(t.w); b.classList.add('used'); paint(); beep([700+pos*90]);
+        if(built.length === target.length){
+          tiles.querySelectorAll('.tile').forEach(x=>x.onclick=null);
+          say(target.join(' '));
+          win(ore);
+        }
+      }else{
+        b.classList.add('bad'); ore.classList.add('shake'); beep([220,150],.14);
+        setTimeout(()=>{ b.classList.remove('bad'); ore.classList.remove('shake'); }, 500);
+        game.streak = 0; $('#streak-pill').style.display='none';
+      }
+    };
+    tiles.appendChild(b);
+  });
+  say(target.join(' '));
+}
+
+/* ---- acierto ---- */
+function win(ore){
+  beep([740,988,1319]);
+  ore.classList.add('pop');
+  burst(ore, game.L.color);
+  game.correct++; game.streak++;
+  let gain = 2;
+  if(game.streak > 0 && game.streak % 3 === 0){
+    gain += 3;
+    floater('🔥 +5');
+    $('#streak-pill').style.display='flex';
+  }else{
+    floater('💎 +2');
+  }
+  if(game.streak >= 2){ $('#streak-pill').style.display='flex'; $('#streak').textContent = game.streak; }
+  const before = unlockedCount();
+  S.gems += gain;
+  render(); save();
+  if(unlockedCount() > before) setTimeout(()=>newCharacter(CHARACTERS[unlockedCount()-1]), 900);
+  setTimeout(next, 950);
+}
+
+/* =========================================================
+   FIN DE NIVEL / MODALES
+   ========================================================= */
+function modal(html){ $('#modal-card').innerHTML = html; $('#modal').classList.add('active'); }
+function closeModal(){ $('#modal').classList.remove('active'); }
+
+function newCharacter(c){
+  beep([523,659,784,1047]);
+  modal(`
+    <h2>¡NUEVO COMPAÑERO!</h2>
+    <div style="font-size:80px" class="hero-guy">${c.em}</div>
+    <div style="font-family:var(--px);font-size:14px;margin-top:12px;color:#fff">${c.name}</div>
+    <div class="row"><button class="block btn-big" id="m1">¡GENIAL!</button></div>`);
+  say(c.name);
+  $('#m1').onclick = closeModal;
+}
+
+function finish(){
+  const st = game.errors <= 1 ? 3 : game.errors <= 3 ? 2 : 1;
+  if((S.stars[game.L.id]||0) < st) S.stars[game.L.id] = st;
+  S.gems += 10;
+  save(); render();
+  beep([523,659,784,1047,1319]);
+  const nextL = LEVELS.find(l => l.id === game.L.id+1);
+  modal(`
+    <h2>¡RUTA COMPLETADA!</h2>
+    <div style="font-size:64px">${game.L.icon}</div>
+    <div class="big-stars">${'⭐'.repeat(st)}${'▫️'.repeat(3-st)}</div>
+    <div style="font-weight:900;font-size:18px">💎 +10 gemas de premio</div>
+    ${nextL ? `<div style="font-size:15px;font-weight:800;margin-top:12px;opacity:.9">🔓 Se abrió: ${nextL.name}</div>` : `<div style="font-size:15px;font-weight:800;margin-top:12px">🏆 ¡Completaste todo el recorrido!</div>`}
+    <div class="row">
+      <button class="block btn-sec" id="m-again">🔁 Otra vez</button>
+      <button class="block btn-big" id="m-map">🗺️ Mapa</button>
+    </div>`);
+  $('#m-again').onclick = ()=>{ closeModal(); startLevel(game.L); };
+  $('#m-map').onclick  = ()=>{ closeModal(); show('map'); };
+}
+
+/* =========================================================
+   NAVEGACIÓN
+   ========================================================= */
+$('#btn-play').onclick      = ()=>{ show('map'); beep([600,800]); };
+$('#btn-chars').onclick     = ()=>show('chars');
+$('#btn-chars-home').onclick= ()=>show('chars');
+$('#chars-back').onclick    = ()=>show('map');
+$('#map-home').onclick      = ()=>show('home');
+$('#play-back').onclick     = ()=>{ speechSynthesis.cancel(); show('map'); };
+$('#btn-repeat').onclick    = ()=>{
+  const q = game && game.current;
+  if(!q) return;
+  say(q.type==='sentence' ? q.data.w.join(' ') : q.word.en);
+};
+
+load();
+})();
+</script>
+
+<footer class="py-12 px-6 bg-black border-t border-zinc-900 text-center relative z-10">
+        <!-- Contenedor horizontal para los logotipos de la familia BOGO -->
+        <div class="flex flex-wrap items-center justify-center gap-6 md:gap-8 mb-8 max-w-3xl mx-auto">
+            <a href="https://www.instagram.com/bogofija/" target="_blank" rel="noopener noreferrer" class="hover:opacity-100 transition-all">
+                <img src="https://i.ibb.co/99R1NsRX/Logo-Bogofija-2021.png" alt="Bogofija" class="h-8 md:h-10 w-auto object-contain opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all">
+            </a>
+            <a href="https://bogochicas.netlify.app/" target="_blank" rel="noopener noreferrer" class="hover:opacity-100 transition-all">
+                <img src="https://i.ibb.co/qLYvYCrT/Logotipos-Eventos.png" alt="Bogochicas" class="h-8 md:h-10 w-auto object-contain opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
+            </a>
+            <a href="https://bogoruta.netlify.app/" target="_blank" rel="noopener noreferrer" class="hover:opacity-100 transition-all">
+                <img src="https://i.ibb.co/cK1KpZbK/bogoruta.png" alt="Bogoruta" class="h-8 md:h-10 w-auto object-contain opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
+            </a>
+            <a href="https://bogomtb.netlify.app/" target="_blank" rel="noopener noreferrer" class="hover:opacity-100 transition-all">
+                <img src="https://i.ibb.co/Q3FqNsjH/bogo-MTB.png" alt="Bogo MTB" class="h-8 md:h-10 w-auto object-contain opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
+            </a>
+            <a href="https://www.instagram.com/bogopublica/" target="_blank" rel="noopener noreferrer" class="hover:opacity-100 transition-all">
+                <img src="https://i.ibb.co/mCWrvnXQ/logo-Bogo-Publica.png" alt="Bogo Pública" class="h-8 md:h-10 w-auto object-contain opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
+            </a>
+            <a href="https://www.instagram.com/bogofixie/" target="_blank" rel="noopener noreferrer" class="hover:opacity-100 transition-all">
+                <img src="https://i.ibb.co/RGSwjNpd/bogofixie.png" alt="Bogo Fixie" class="h-8 md:h-10 w-auto object-contain opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
+            </a>
+        </div>
+        
+        <!-- Ubicación y Correo -->
+        <p class="text-zinc-500 text-sm mb-2 font-medium">Bogotá, Colombia</p>
+        <a href="mailto:bogofija@gmail.com" class="text-zinc-300 hover:text-brand-yellow font-bold block mb-8 transition-colors">bogofija@gmail.com</a>
+        
+        <!-- REDES SOCIALES -->
+        <div class="flex justify-center items-center gap-6 mb-8">
+            <a href="https://www.tiktok.com/@bogofija" target="_blank" rel="noopener noreferrer" class="text-zinc-600 hover:text-white text-xl transition-colors" aria-label="TikTok">
+                <i class="fa-brands fa-tiktok"></i>
+            </a>
+            <a href="https://www.strava.com/clubs/bogofija" target="_blank" rel="noopener noreferrer" class="text-zinc-600 hover:text-white text-xl transition-colors" aria-label="Strava">
+                <i class="fa-brands fa-strava"></i>
+            </a>
+            <a href="https://www.instagram.com/bogofija/" target="_blank" rel="noopener noreferrer" class="text-zinc-600 hover:text-white text-xl transition-colors" aria-label="Instagram">
+                <i class="fa-brands fa-instagram"></i>
+            </a>
+            <a href="https://www.youtube.com/channel/UCi5ZT2D3YvF3M3_dDLtwVXg" target="_blank" rel="noopener noreferrer" class="text-zinc-600 hover:text-white text-xl transition-colors" aria-label="YouTube">
+                <i class="fa-brands fa-youtube"></i>
+            </a>
+        </div>
+        
+        <!-- Copyright -->
+        <p class="text-zinc-700 text-[10px] font-bold tracking-widest uppercase">&copy; 2020 by BOGOFIJA</p>
+    </footer>
+</body>
+</html>

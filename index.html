@@ -3,287 +3,513 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Bogo Kids Bici Kids - Bogofija</title>
+<title>BogoKids - Aprende Inglés en Bici</title>
+<link rel="icon" type="image/png" href="https://i.ibb.co/pBsqV58k/Logo-Bogofija-2021-simbolo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;600;700&family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-  :root{
-    --sky:#7FD8F7;
-    --sky-deep:#4CB8E8;
-    --grass:#7ED957;
-    --grass-dark:#4CAF50;
-    --dirt:#C68642;
-    --dirt-dark:#8B5A2B;
-    --stone:#6FA8DC;
-    --stone-dark:#4A7FB5;
-    --night:#2D2A6E;
-    --night-2:#3E3A8C;
-    --gold:#FFD23F;
-    --gold-dark:#F4A300;
-    --gem:#3FE0C5;
-    --danger:#FF6B6B;
-    --paper:#FFF6E0;
-    --px: 'Baloo 2', 'Nunito', system-ui, sans-serif;
+  :root {
+    --sky: #87CEEB;
+    --sky-deep: #4CB8E8;
+    --grass: #7ED957;
+    --grass-dark: #4CAF50;
+    --dirt: #DEB887;
+    --dirt-dark: #8B4513;
+    --stone: #A9A9A9;
+    --stone-dark: #696969;
+    --night: #1A1A2E;
+    --night-2: #16213E;
+    --gold: #FFD700;
+    --gold-dark: #FFA500;
+    --gem: #00FFFF;
+    --danger: #FF6B6B;
+    --paper: #FFF8DC;
+    --brand-yellow: #FFD23F;
+    --px: 'Baloo 2', system-ui, sans-serif;
+    --pixel: 'Pixelify Sans', 'Baloo 2', system-ui, sans-serif;
     --body: 'Nunito', 'Trebuchet MS', system-ui, sans-serif;
   }
 
-  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html,body{height:auto; min-height:100%;}
-  body{
-    margin:0;
-    font-family:var(--body);
-    background:var(--night);
-    color:#fff;
-    overflow-x:hidden;
-    overflow-y:auto;
-    user-select:none;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; margin: 0; padding: 0; }
+  
+  body {
+    font-family: var(--body);
+    background-color: var(--night);
+    background-image: radial-gradient(circle at center, var(--night-2) 0%, var(--night) 100%);
+    color: #fff;
+    overflow-x: hidden;
+    overflow-y: auto;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Fondo responsivo para pantallas grandes */
+    background-attachment: fixed;
   }
 
   /* ---------- marco del juego ---------- */
-  #game{
-    position:relative;
-    width:100%; height:100vh; max-height:900px;
-    max-width:520px;
-    background:
-      linear-gradient(180deg, var(--sky) 0%, var(--sky-deep) 55%, var(--grass) 55%, var(--grass-dark) 100%);
-    overflow:hidden;
-    display:flex; flex-direction:column;
-    flex:0 0 auto;
+  #game-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1 0 auto;
+    padding: 0;
   }
-  #game::after{ /* textura de bloques sutil */
-    content:''; position:absolute; inset:0; pointer-events:none;
+
+  @media (min-width: 640px) {
+    #game-container { padding: 20px 0 0; }
+  }
+
+  #game {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    max-height: 900px;
+    max-width: 520px;
+    background: linear-gradient(180deg, var(--sky) 0%, var(--sky-deep) 50%, var(--grass) 50%, var(--grass-dark) 100%);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  }
+  
+  @media (min-width: 640px) {
+    #game {
+      height: 90vh;
+      border-radius: 24px 24px 0 0;
+      border: 8px solid var(--night-2);
+      border-bottom: none;
+    }
+  }
+
+  #game::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
     background-image:
-      linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,0,0,.05) 1px, transparent 1px);
-    background-size:32px 32px;
-    opacity:.5;
+      linear-gradient(rgba(255,255,255,.07) 2px, transparent 2px),
+      linear-gradient(90deg, rgba(0,0,0,.04) 2px, transparent 2px);
+    background-size: 40px 40px;
+    opacity: 0.6;
+    z-index: 1;
   }
 
-  .screen{
-    position:absolute; inset:0;
-    display:none; flex-direction:column;
-    padding:16px;
-    z-index:2;
-    overflow-y:auto;
+  /* Nubes decorativas de fondo */
+  .cloud {
+    position: absolute; background: white; border-radius: 50px;
+    opacity: 0.8; z-index: 0; animation: floatCloud linear infinite;
   }
-  .screen.active{display:flex;}
+  .cloud::before, .cloud::after {
+    content: ''; position: absolute; background: white; border-radius: 50%;
+  }
+  .c1 { width: 60px; height: 20px; top: 10%; left: -60px; animation-duration: 25s; }
+  .c1::before { width: 30px; height: 30px; top: -15px; left: 10px; }
+  .c1::after { width: 20px; height: 20px; top: -10px; right: 10px; }
+  .c2 { width: 80px; height: 25px; top: 25%; left: -80px; animation-duration: 35s; animation-delay: 5s; opacity: 0.6; }
+  .c2::before { width: 40px; height: 40px; top: -20px; left: 15px; }
+  .c2::after { width: 30px; height: 30px; top: -15px; right: 15px; }
+  
+  @keyframes floatCloud {
+    from { transform: translateX(-100px); }
+    to { transform: translateX(600px); }
+  }
 
-  /* ---------- bloque base ---------- */
-  .block{
-    border:none;
-    border-radius:4px;
+  .screen {
+    position: absolute; inset: 0;
+    display: none; flex-direction: column;
+    padding: 20px;
+    z-index: 2;
+    overflow-y: auto;
+  }
+  .screen.active { display: flex; animation: fadeIn 0.3s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+
+  /* ---------- bloque base (Botones 3D) ---------- */
+  .block {
+    border: none;
+    border-radius: 12px;
     box-shadow:
-      inset 4px 4px 0 rgba(255,255,255,.35),
-      inset -4px -4px 0 rgba(0,0,0,.35),
-      0 6px 0 rgba(0,0,0,.35);
-    cursor:pointer;
-    transition:transform .07s;
-    font-family:var(--body);
-    font-weight:900;
-    color:#fff;
-    text-shadow:2px 2px 0 rgba(0,0,0,.35);
+      inset 4px 4px 0 rgba(255,255,255,.4),
+      inset -4px -4px 0 rgba(0,0,0,.2),
+      0 8px 0 rgba(0,0,0,.25),
+      0 12px 10px rgba(0,0,0,.15);
+    cursor: pointer;
+    transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1); /* Curva elástica */
+    font-family: var(--px);
+    font-weight: 800;
+    color: #fff;
+    text-shadow: 2px 2px 0 rgba(0,0,0,.3);
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
   }
-  .block:active{transform:translateY(4px); box-shadow:
+  
+  /* Brillo en los botones */
+  .block::before {
+    content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transform: skewX(-20deg); transition: 0s;
+  }
+  .block:hover::before { left: 150%; transition: 0.7s; }
+
+  .block:active {
+    transform: translateY(6px);
+    box-shadow:
       inset 4px 4px 0 rgba(255,255,255,.3),
-      inset -4px -4px 0 rgba(0,0,0,.3),
-      0 2px 0 rgba(0,0,0,.35);}
-  .block:focus-visible{outline:4px solid #fff; outline-offset:3px;}
+      inset -4px -4px 0 rgba(0,0,0,.2),
+      0 2px 0 rgba(0,0,0,.25),
+      0 4px 5px rgba(0,0,0,.1);
+  }
+  .block:focus-visible { outline: 4px solid var(--gold); outline-offset: 4px; }
+  @media (hover: hover) {
+    .block:hover:not(:disabled):not(.locked) {
+      transform: translateY(-4px) scale(1.04);
+      box-shadow:
+        inset 4px 4px 0 rgba(255,255,255,.45),
+        inset -4px -4px 0 rgba(0,0,0,.2),
+        0 12px 0 rgba(0,0,0,.25),
+        0 18px 16px rgba(0,0,0,.2);
+    }
+    .block:hover:not(:disabled):not(.locked):active { transform: translateY(3px) scale(1); }
+  }
 
   /* ---------- HOME ---------- */
-  #home{align-items:center; justify-content:center; gap:22px; text-align:center;}
-  .logo{
-    font-family:var(--px);
-    font-size:clamp(16px,5.4vw,26px);
-    line-height:1.7;
-    color:var(--gold);
-    text-shadow:4px 4px 0 var(--dirt-dark), 8px 8px 0 rgba(0,0,0,.25);
-    letter-spacing:1px;
+  #home { align-items: center; justify-content: center; gap: 24px; text-align: center; }
+  .logo {
+    font-family: var(--pixel);
+    font-weight: 700;
+    font-size: clamp(30px, 8vw, 46px);
+    line-height: 1.05;
+    color: var(--gold);
+    text-shadow:
+      2px 2px 0 var(--gold-dark),
+      4px 4px 0 var(--dirt-dark),
+      6px 6px 0 var(--dirt-dark),
+      8px 8px 0 rgba(0,0,0,.35);
+    letter-spacing: 3px;
+    -webkit-font-smoothing: none;
+    animation: pulseLogo 2s infinite alternate;
   }
-  .logo small{display:block; font-size:.5em; color:#fff; text-shadow:3px 3px 0 rgba(0,0,0,.4); margin-top:12px;}
-  .hero-guy{font-size:76px; filter:drop-shadow(0 8px 0 rgba(0,0,0,.25)); animation:bob 1.6s ease-in-out infinite;}
-  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-  .deco-row{font-size:22px; opacity:.55; letter-spacing:6px; pointer-events:none;}
+  @keyframes pulseLogo { from { transform: scale(1); } to { transform: scale(1.03); } }
+  .logo small {
+    display: block; font-size: 0.3em; color: #fff;
+    text-shadow: 2px 2px 0 var(--dirt-dark), 3px 3px 0 rgba(0,0,0,.4); margin-top: 10px; letter-spacing: 1px;
+    font-family: var(--body); font-weight: 900; text-transform: uppercase;
+  }
+  
+  .hero-guy {
+    font-size: 90px;
+    filter: drop-shadow(0 10px 5px rgba(0,0,0,.3));
+    animation: bob 1.4s ease-in-out infinite;
+    position: relative;
+    z-index: 10;
+  }
+  @keyframes bob { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(3deg); } }
+  
+  .deco-row { font-size: 26px; opacity: 0.8; letter-spacing: 10px; pointer-events: none; margin-bottom: -10px; }
 
-  .btn-big{
-    background:var(--grass);
-    padding:20px 34px;
-    font-size:24px;
-    display:flex; align-items:center; gap:12px;
+  .btn-big {
+    background: linear-gradient(160deg, #8CEB63 0%, var(--grass) 55%, var(--grass-dark) 100%);
+    padding: 22px 40px;
+    font-size: 28px;
+    display: flex; align-items: center; gap: 14px;
+    border-radius: 20px;
+    text-transform: uppercase;
   }
-  .btn-sec{background:var(--stone); padding:14px 22px; font-size:17px;}
+  .btn-sec {
+    background: linear-gradient(160deg, #7FD8F7 0%, var(--sky-deep) 100%);
+    padding: 16px 28px;
+    font-size: 18px;
+    border-radius: 16px;
+  }
 
   /* ---------- barra superior ---------- */
-  .topbar{
-    display:flex; align-items:center; gap:8px; margin-bottom:14px; flex:0 0 auto;
+  .topbar {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 20px; flex: 0 0 auto;
+    background: rgba(0,0,0,0.2); padding: 10px; border-radius: 16px; backdrop-filter: blur(4px);
   }
-  .pill{
-    background:rgba(0,0,0,.45); border-radius:999px; padding:8px 14px;
-    font-weight:900; font-size:16px; display:flex; align-items:center; gap:6px;
-    box-shadow:inset 0 2px 0 rgba(255,255,255,.12);
+  .pill {
+    background: rgba(0,0,0,.5); border-radius: 999px; padding: 8px 16px;
+    font-weight: 900; font-size: 18px; display: flex; align-items: center; gap: 8px;
+    box-shadow: inset 0 2px 0 rgba(255,255,255,.15), 0 2px 4px rgba(0,0,0,0.3);
+    font-family: var(--px);
   }
-  .icon-btn{
-    width:46px; height:46px; background:var(--stone); font-size:20px;
-    display:flex; align-items:center; justify-content:center;
+  .pill .gem-icon { color: var(--gem); filter: drop-shadow(0 0 2px var(--gem)); }
+  
+  .icon-btn {
+    width: 50px; height: 50px; background: linear-gradient(160deg, #FFB74D, var(--gold-dark)); font-size: 22px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 14px;
   }
-  .spacer{flex:1;}
+  .spacer { flex: 1; }
 
   /* ---------- MAPA ---------- */
-  #map .title{font-family:var(--px); font-size:13px; text-align:center; margin:2px 0 16px; text-shadow:3px 3px 0 rgba(0,0,0,.4);}
-  .biomes{display:flex; flex-direction:column; gap:14px; padding-bottom:20px;}
-  .biome{
-    display:flex; align-items:center; gap:14px;
-    padding:14px; text-align:left;
-    position:relative;
+  #map .title { font-family: var(--px); font-weight: 700; font-size: 17px; text-align: center; margin: 0 0 16px; color: var(--gold); text-shadow: 2px 2px 0 var(--gold-dark), 3px 3px 0 rgba(0,0,0,.5); text-transform: uppercase; letter-spacing: 2px; }
+  .biomes { display: flex; flex-direction: column; gap: 16px; padding-bottom: 24px; }
+  .biome {
+    display: flex; align-items: center; gap: 16px;
+    padding: 16px; text-align: left;
+    position: relative;
+    border-radius: 16px;
   }
-  .biome .face{
-    width:64px; height:64px; flex:0 0 auto;
-    display:flex; align-items:center; justify-content:center;
-    font-size:34px; border-radius:4px;
-    background:rgba(0,0,0,.28);
-    box-shadow:inset 3px 3px 0 rgba(255,255,255,.18), inset -3px -3px 0 rgba(0,0,0,.3);
+  .biome .face {
+    width: 70px; height: 70px; flex: 0 0 auto;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 38px; border-radius: 12px;
+    background: rgba(0,0,0,.25);
+    box-shadow: inset 3px 3px 0 rgba(255,255,255,.2), inset -3px -3px 0 rgba(0,0,0,.3);
   }
-  .biome .info{flex:1; min-width:0;}
-  .biome .nm{font-size:19px; font-weight:900;}
-  .biome .sub{font-size:13px; opacity:.9; font-weight:800;}
-  .stars{font-size:17px; letter-spacing:2px; margin-top:4px;}
-  .biome.locked{filter:grayscale(.85) brightness(.65); cursor:not-allowed;}
-  .biome.locked .face::after{content:'🔒'; position:absolute; font-size:26px;}
-  .biome.locked .face span{opacity:.15;}
+  .biome .info { flex: 1; min-width: 0; }
+  .biome .nm { font-size: 19px; font-weight: 700; line-height: 1.3; font-family: var(--px); text-shadow: 1px 1px 0 rgba(0,0,0,0.4); }
+  .biome .sub { font-size: 14px; opacity: 0.9; font-weight: 700; font-family: var(--body); margin-top: 2px; }
+  .stars { font-size: 18px; letter-spacing: 3px; margin-top: 6px; filter: drop-shadow(1px 1px 0 rgba(0,0,0,0.5)); }
+  .biome.locked { filter: grayscale(0.9) brightness(0.7); cursor: not-allowed; transform: none; box-shadow: inset 4px 4px 0 rgba(255,255,255,.1), inset -4px -4px 0 rgba(0,0,0,.2), 0 4px 0 rgba(0,0,0,.2); }
+  .biome.locked:active { transform: none; }
+  .biome.locked .face::after { content: '🔒'; position: absolute; font-size: 30px; filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.5)); }
+  .biome.locked .face span { opacity: 0.2; }
 
   /* ---------- JUGAR ---------- */
-  #play{padding:14px;}
-  .progress{display:flex; gap:4px; margin-bottom:10px; flex:0 0 auto;}
-  .pblock{flex:1; height:12px; background:rgba(0,0,0,.4); border-radius:2px;
-    box-shadow:inset 0 2px 0 rgba(255,255,255,.08);}
-  .pblock.done{background:var(--gold); box-shadow:inset 2px 2px 0 rgba(255,255,255,.5), inset -2px -2px 0 rgba(0,0,0,.25);}
+  #play { padding: 16px; }
+  .progress { display: flex; gap: 6px; margin-bottom: 16px; flex: 0 0 auto; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 12px; }
+  .pblock {
+    flex: 1; height: 14px; background: rgba(0,0,0,.4); border-radius: 4px;
+    box-shadow: inset 0 2px 0 rgba(255,255,255,.1);
+    transition: all 0.3s ease;
+  }
+  .pblock.done {
+    background: var(--grass);
+    box-shadow: inset 2px 2px 0 rgba(255,255,255,.5), inset -2px -2px 0 rgba(0,0,0,.2);
+    transform: scaleY(1.2);
+  }
 
-  .stage{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; min-height:0;}
+  .stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; min-height: 0; position: relative; }
 
-  .oreblock{
-    width:min(64vw,220px); height:min(64vw,220px);
-    background:var(--stone);
-    border-radius:6px;
-    display:flex; align-items:center; justify-content:center;
-    font-size:min(30vw,104px);
-    position:relative;
+  .oreblock {
+    width: min(60vw, 240px); height: min(60vw, 240px);
+    background: var(--stone);
+    border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: min(28vw, 110px);
+    position: relative;
     box-shadow:
-      inset 6px 6px 0 rgba(255,255,255,.28),
-      inset -6px -6px 0 rgba(0,0,0,.35),
-      0 10px 0 rgba(0,0,0,.3);
+      inset 8px 8px 0 rgba(255,255,255,.3),
+      inset -8px -8px 0 rgba(0,0,0,.3),
+      0 12px 20px rgba(0,0,0,.4);
+    z-index: 10;
   }
-  .oreblock .word{font-family:var(--px); font-size:min(7vw,26px); color:#fff; text-shadow:3px 3px 0 rgba(0,0,0,.45); text-align:center; padding:0 8px; line-height:1.6;}
-  .oreblock.shake{animation:shake .3s;}
-  @keyframes shake{0%,100%{transform:translate(0,0)}25%{transform:translate(-8px,2px)}50%{transform:translate(7px,-3px)}75%{transform:translate(-5px,3px)}}
-  .oreblock.pop{animation:pop .35s forwards;}
-  @keyframes pop{to{transform:scale(1.35); opacity:0;}}
+  .oreblock .word { font-family: var(--px); font-size: clamp(24px, 6vw, 36px); color: #fff; text-shadow: 3px 3px 0 rgba(0,0,0,.5); text-align: center; padding: 0 12px; line-height: 1.4; word-break: break-word; }
+  .oreblock.shake { animation: shake .4s cubic-bezier(.36,.07,.19,.97) both; }
+  @keyframes shake { 10%, 90% { transform: translate3d(-2px, 0, 0); } 20%, 80% { transform: translate3d(4px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-8px, 0, 0); } 40%, 60% { transform: translate3d(8px, 0, 0); } }
+  .oreblock.pop { animation: pop .4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+  @keyframes pop { 50% { transform: scale(1.2); } 100% { transform: scale(0); opacity: 0; } }
 
-  .speaker{
-    background:var(--gold); width:96px; height:96px; font-size:44px;
-    display:flex; align-items:center; justify-content:center; margin:0 auto;
+  .speaker {
+    background: var(--gold); width: 100px; height: 100px; font-size: 50px;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto;
+    border-radius: 50%;
   }
-  .hint{font-size:15px; font-weight:900; opacity:.9; text-shadow:1px 1px 0 rgba(0,0,0,.4); display:flex; gap:8px; align-items:center;}
+  .hint {
+    font-size: 16px; font-weight: 900; opacity: 1; text-shadow: 2px 2px 0 rgba(0,0,0,.6);
+    display: flex; gap: 10px; align-items: center;
+    background: rgba(0,0,0,0.4); padding: 8px 16px; border-radius: 20px;
+    animation: floatHint 2s infinite;
+  }
+  @keyframes floatHint { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
 
-  .options{
-    display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%;
-    flex:0 0 auto; padding-bottom:6px;
+  .options {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px; width: 100%;
+    flex: 0 0 auto; padding-bottom: 12px;
   }
-  .opt{
-    background:var(--dirt); padding:16px 8px; font-size:20px; min-height:70px;
-    display:flex; align-items:center; justify-content:center; word-break:break-word;
+  .opt {
+    background: var(--dirt); padding: 18px 10px; font-size: 22px; min-height: 80px;
+    display: flex; align-items: center; justify-content: center; word-break: break-word;
+    border-radius: 16px; line-height: 1.2; text-align: center;
   }
-  .opt.emoji{font-size:44px;}
-  .opt.ok{background:var(--grass);}
-  .opt.bad{background:var(--danger);}
-  .opt[disabled]{cursor:default;}
+  .opt.emoji { font-size: 50px; }
+  .opt.ok { background: var(--grass); animation: pulseOk 0.5s; }
+  @keyframes pulseOk { 50% { transform: scale(1.05); } }
+  .opt.bad { background: var(--danger); opacity: 0.8; }
+  .opt[disabled] { cursor: default; }
 
   /* frases */
-  .slots{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; min-height:60px; align-items:center;}
-  .slot{
-    min-width:74px; height:56px; border-radius:4px;
-    background:rgba(0,0,0,.35);
-    box-shadow:inset 0 0 0 4px rgba(255,255,255,.18);
-    display:flex; align-items:center; justify-content:center;
-    font-weight:900; font-size:19px;
+  .slots { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; min-height: 70px; align-items: center; width: 100%; }
+  .slot {
+    min-width: 80px; height: 60px; border-radius: 10px;
+    background: rgba(0,0,0,.4);
+    box-shadow: inset 0 0 0 4px rgba(255,255,255,.1);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 20px; font-family: var(--px);
+    transition: all 0.2s;
   }
-  .slot.filled{background:var(--grass); box-shadow:inset 3px 3px 0 rgba(255,255,255,.3), inset -3px -3px 0 rgba(0,0,0,.3);}
-  .tiles{display:flex; gap:8px; flex-wrap:wrap; justify-content:center;}
-  .tile{background:var(--dirt); padding:14px 16px; font-size:19px;}
-  .tile.used{visibility:hidden;}
+  .slot.filled {
+    background: var(--grass);
+    box-shadow: inset 3px 3px 0 rgba(255,255,255,.3), inset -3px -3px 0 rgba(0,0,0,.2), 0 4px 0 rgba(0,0,0,.2);
+    transform: scale(1.05);
+  }
+  .tiles { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; width: 100%; }
+  .tile { background: var(--sky-deep); padding: 16px 20px; font-size: 20px; border-radius: 12px; }
+  .tile.used { visibility: hidden; }
 
-  /* ---------- FEEDBACK ---------- */
-  #fx{position:absolute; inset:0; pointer-events:none; z-index:9; overflow:hidden;}
-  .particle{position:absolute; width:14px; height:14px; border-radius:2px; animation:fly .7s ease-out forwards;}
-  @keyframes fly{to{transform:translate(var(--dx),var(--dy)) rotate(220deg); opacity:0;}}
-  .floater{
-    position:absolute; font-family:var(--px); font-size:18px; color:var(--gold);
-    text-shadow:3px 3px 0 rgba(0,0,0,.5); animation:rise 1s ease-out forwards; white-space:nowrap;
+  /* ---------- FEEDBACK Y PARTÍCULAS ---------- */
+  #fx { position: absolute; inset: 0; pointer-events: none; z-index: 15; overflow: hidden; }
+  .particle {
+    position: absolute; width: 16px; height: 16px;
+    background-size: contain; background-repeat: no-repeat;
+    animation: fly 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   }
-  @keyframes rise{to{transform:translateY(-90px); opacity:0;}}
+  /* Formas variadas para partículas usando SVG codificado */
+  .p-star { background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" fill="%23FFD700" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>'); }
+  .p-circle { border-radius: 50%; }
+  
+  @keyframes fly {
+    0% { transform: translate(0,0) scale(0.5) rotate(0deg); opacity: 1; }
+    100% { transform: translate(var(--dx),var(--dy)) scale(1.5) rotate(var(--rot)); opacity: 0; }
+  }
+  
+  .floater {
+    position: absolute; font-family: var(--px); font-size: 24px; font-weight: 900;
+    color: var(--gold); text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+    animation: rise 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; white-space: nowrap; z-index: 16;
+  }
+  @keyframes rise {
+    0% { transform: translate(-50%, 0) scale(0.5); opacity: 0; }
+    20% { transform: translate(-50%, -20px) scale(1.2); opacity: 1; }
+    80% { transform: translate(-50%, -80px) scale(1); opacity: 1; }
+    100% { transform: translate(-50%, -100px) scale(0.8); opacity: 0; }
+  }
 
   /* ---------- MODAL ---------- */
-  .modal{
-    position:absolute; inset:0; z-index:20;
-    background:rgba(20,16,28,.82);
-    display:none; align-items:center; justify-content:center; padding:20px;
+  .modal {
+    position: absolute; inset: 0; z-index: 30;
+    background: rgba(10, 10, 20, 0.85); backdrop-filter: blur(5px);
+    display: none; align-items: center; justify-content: center; padding: 20px;
   }
-  .modal.active{display:flex;}
-  .card{
-    background:var(--night-2); border-radius:6px; padding:26px 20px; width:100%; max-width:380px;
-    text-align:center;
-    box-shadow:inset 5px 5px 0 rgba(255,255,255,.12), inset -5px -5px 0 rgba(0,0,0,.4), 0 10px 0 rgba(0,0,0,.4);
-    animation:drop .35s cubic-bezier(.2,1.5,.5,1);
+  .modal.active { display: flex; animation: fadeInModal 0.2s ease-out; }
+  @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
+  
+  .card {
+    background: var(--night-2); border-radius: 24px; padding: 32px 24px; width: 100%; max-width: 400px;
+    text-align: center;
+    box-shadow: inset 4px 4px 0 rgba(255,255,255,.1), inset -4px -4px 0 rgba(0,0,0,.4), 0 15px 30px rgba(0,0,0,.6);
+    border: 4px solid var(--sky-deep);
+    animation: drop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
   }
-  @keyframes drop{from{transform:translateY(-60px) scale(.85); opacity:0;}}
-  .card h2{font-family:var(--px); font-size:15px; margin:0 0 16px; color:var(--gold); line-height:1.7;}
-  .big-stars{font-size:44px; letter-spacing:6px; margin:6px 0 14px;}
-  .card .row{display:flex; gap:10px; justify-content:center; margin-top:20px; flex-wrap:wrap;}
+  @keyframes drop { from { transform: translateY(-80px) scale(0.8); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+  
+  .card h2 { font-family: var(--px); font-weight: 700; font-size: 22px; margin: 0 0 16px; color: var(--gold); line-height: 1.5; text-shadow: 2px 2px 0 var(--gold-dark), 4px 4px 0 rgba(0,0,0,0.5); letter-spacing: 1px; }
+  .big-stars { font-size: 48px; letter-spacing: 8px; margin: 12px 0 20px; filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.5)); }
+  .card .row { display: flex; gap: 12px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
 
   /* ---------- COLECCIÓN ---------- */
-  .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; padding-bottom:20px;}
-  .char{
-    background:rgba(0,0,0,.3); border-radius:4px; padding:14px 6px; text-align:center;
-    box-shadow:inset 3px 3px 0 rgba(255,255,255,.14), inset -3px -3px 0 rgba(0,0,0,.3);
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; padding-bottom: 24px; }
+  .char {
+    background: rgba(0,0,0,.3); border-radius: 12px; padding: 16px 8px; text-align: center;
+    box-shadow: inset 3px 3px 0 rgba(255,255,255,.1), inset -3px -3px 0 rgba(0,0,0,.3);
+    transition: transform 0.2s;
   }
-  .char .em{font-size:42px;}
-  .char .cn{font-size:12px; font-weight:900; margin-top:6px;}
-  .char.lock{filter:grayscale(1) brightness(.5);}
-  .char.lock .em::after{content:'';}
-  .char .need{font-size:11px; font-weight:900; color:var(--gold);}
+  .char:not(.lock):active { transform: scale(0.95); }
+  .char .em { font-size: 46px; filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.4)); }
+  .char .cn { font-size: 13px; font-weight: 900; margin-top: 8px; line-height: 1.2; font-family: var(--px); }
+  .char.lock { filter: grayscale(1) brightness(0.4); opacity: 0.8; }
+  .char.lock .em { filter: none; }
+  .char .need { font-size: 12px; font-weight: 900; color: var(--gold); margin-top: 4px; background: rgba(0,0,0,0.5); border-radius: 10px; padding: 2px; }
 
-  @media (prefers-reduced-motion: reduce){
-    *{animation:none !important; transition:none !important;}
+  /* ---------- CONFETI DE PANTALLA COMPLETA (fin del juego) ---------- */
+  .confetti-layer {
+    position: fixed; inset: 0; z-index: 9999; pointer-events: none; overflow: hidden;
   }
-  @media (max-height:680px){
-    .oreblock{width:150px;height:150px;font-size:70px;}
-    .hero-guy{font-size:58px;}
+  .confetti-piece {
+    position: absolute; top: -20px; opacity: 0.95; border-radius: 2px;
+    animation-name: confettiFall; animation-timing-function: cubic-bezier(.4,0,.6,1); animation-fill-mode: forwards;
+  }
+  .confetti-piece.round { border-radius: 50%; }
+  @keyframes confettiFall {
+    0%   { transform: translate(0,0) rotate(0deg); opacity: 1; }
+    100% { transform: translate(var(--drift), 115vh) rotate(var(--rot)); opacity: 0.85; }
+  }
+
+  /* ---------- CÓDIGO DE DESCUENTO ---------- */
+  .reward-code {
+    font-family: var(--pixel); font-weight: 600; font-size: clamp(20px, 6vw, 28px);
+    letter-spacing: 2px; color: var(--night-2); text-align: center;
+    background: repeating-linear-gradient(135deg, var(--gold) 0 18px, #FFE27A 18px 36px);
+    border: 4px dashed var(--night-2);
+    border-radius: 16px; padding: 16px 10px;
+    box-shadow: inset 0 0 0 3px rgba(255,255,255,.5), 0 6px 0 rgba(0,0,0,.2);
+    word-break: break-word;
+  }
+
+  /* Tutorial Overlay */
+  #tutorial-hand {
+    position: absolute; font-size: 40px; z-index: 100; pointer-events: none;
+    animation: pointAndClick 2s infinite; display: none; filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.5));
+  }
+  @keyframes pointAndClick { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(-10px,-10px) scale(0.9);} }
+
+  .text-brand-yellow { color: var(--brand-yellow) !important; }
+  .hover\:text-brand-yellow:hover { color: var(--brand-yellow) !important; }
+
+  /* ---------- FOOTER (integrado al universo del juego) ---------- */
+  .footer-bogo {
+    background: linear-gradient(180deg, var(--grass-dark) 0%, var(--night-2) 55%, var(--night) 100%);
+    margin-top: -1px;
+  }
+  .footer-bogo p, .footer-bogo a { font-family: var(--body); }
+  @media (min-width: 640px) {
+    .footer-bogo {
+      border-radius: 0 0 24px 24px;
+      max-width: 520px; margin: -1px auto 0;
+      border-left: 8px solid var(--night-2);
+      border-right: 8px solid var(--night-2);
+      border-bottom: 8px solid var(--night-2);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+  @media (max-height: 700px) {
+    .oreblock { width: 160px; height: 160px; font-size: 70px; }
+    .hero-guy { font-size: 70px; }
+    .btn-big { padding: 16px 30px; font-size: 22px; }
+    .logo { font-size: clamp(24px, 6vw, 32px); }
   }
 </style>
 </head>
 <body>
+<div id="game-container">
 <div id="game">
+  <!-- Fondo animado nubes -->
+  <div class="cloud c1"></div>
+  <div class="cloud c2"></div>
+
+  <!-- Tutorial Hand -->
+  <div id="tutorial-hand">👆🏽</div>
 
   <!-- ===== HOME ===== -->
   <section id="home" class="screen active">
     <div class="deco-row" aria-hidden="true">🌳 🌸 🚲 🌸 🌳</div>
-    <div class="hero-guy">🚵</div>
-    <div class="logo">BOGO<br>KIDS<small>FAMILIA BOGO · Learn English</small></div>
-    <button class="block btn-big" id="btn-play">▶ PEDALEAR</button>
-    <button class="block btn-sec" id="btn-chars-home">🎁 Mis compañeros</button>
+    <div class="hero-guy">🚵🏽‍♀️</div>
+    <div class="logo">BOGO<br>KIDS<small>Aprende Inglés en Bici</small></div>
+    <button class="block btn-big" id="btn-play">
+      <i class="fa-solid fa-play"></i> PEDALEAR
+    </button>
+    <button class="block btn-sec" id="btn-chars-home">
+      <i class="fa-solid fa-gift text-brand-yellow"></i> Mis compañeros
+    </button>
   </section>
 
   <!-- ===== MAPA ===== -->
   <section id="map" class="screen">
     <div class="topbar">
-      <button class="block icon-btn" id="map-home">🏠</button>
+      <button class="block icon-btn" id="map-home"><i class="fa-solid fa-house"></i></button>
       <div class="spacer"></div>
-      <div class="pill">💎 <span id="gems-map">0</span></div>
-      <button class="block icon-btn" id="btn-chars">🎁</button>
+      <div class="pill"><i class="fa-solid fa-gem gem-icon"></i> <span id="gems-map">0</span></div>
+      <button class="block icon-btn" id="btn-chars"><i class="fa-solid fa-gift text-brand-yellow"></i></button>
     </div>
     <div class="title">ELEGÍ UNA RUTA</div>
     <div class="biomes" id="biomes"></div>
@@ -292,11 +518,13 @@
   <!-- ===== JUGAR ===== -->
   <section id="play" class="screen">
     <div class="topbar">
-      <button class="block icon-btn" id="play-back">⬅</button>
-      <div class="pill">💎 <span id="gems-play">0</span></div>
-      <div class="pill" id="streak-pill" style="display:none">🔥 <span id="streak">0</span></div>
+      <button class="block icon-btn" id="play-back"><i class="fa-solid fa-arrow-left"></i></button>
+      <div class="pill"><i class="fa-solid fa-gem gem-icon"></i> <span id="gems-play">0</span></div>
+      <div class="pill" id="streak-pill" style="display:none; background: rgba(255,107,107,0.3); border: 1px solid var(--danger);">
+        🔥 <span id="streak">0</span>
+      </div>
       <div class="spacer"></div>
-      <button class="block icon-btn" id="btn-repeat">🔊</button>
+      <button class="block icon-btn" id="btn-repeat" style="background: var(--sky-deep);"><i class="fa-solid fa-volume-high"></i></button>
     </div>
     <div class="progress" id="progress"></div>
     <div class="stage" id="stage"></div>
@@ -306,11 +534,11 @@
   <!-- ===== COLECCIÓN ===== -->
   <section id="chars" class="screen">
     <div class="topbar">
-      <button class="block icon-btn" id="chars-back">⬅</button>
+      <button class="block icon-btn" id="chars-back"><i class="fa-solid fa-arrow-left"></i></button>
       <div class="spacer"></div>
-      <div class="pill">💎 <span id="gems-chars">0</span></div>
+      <div class="pill"><i class="fa-solid fa-gem gem-icon"></i> <span id="gems-chars">0</span></div>
     </div>
-    <div class="title" style="font-family:var(--px);font-size:12px;text-align:center;margin:2px 0 16px;">MIS COMPAÑEROS DE RUTA</div>
+    <div class="title" style="font-family:var(--px);font-weight:700;font-size:16px;text-align:center;margin:0 0 16px;color:var(--gold);text-shadow:2px 2px 0 var(--gold-dark),3px 3px 0 rgba(0,0,0,.5); text-transform: uppercase; letter-spacing: 1px;">MIS COMPAÑEROS DE RUTA</div>
     <div class="grid" id="chargrid"></div>
   </section>
 
@@ -322,13 +550,14 @@
   </div>
 
 </div>
+</div>
 
 <script>
 (() => {
 "use strict";
 
 /* =========================================================
-   CONTENIDO
+   CONTENIDO Y CONFIGURACIÓN
    ========================================================= */
 const LEVELS = [
   {
@@ -342,17 +571,17 @@ const LEVELS = [
     ]
   },
   {
-    id:2, name:'Calles y Ciclovías', sub:'La ciudad en bici', icon:'🏙️', color:'#4CB8E8',
+    id:2, name:'Calles de Bogotá', sub:'La ciudad en bici', icon:'🏙️', color:'#4CB8E8',
     modes:['audio2img','img2word'],
     words:[
       {en:'bike', em:'🚲'}, {en:'car', em:'🚗'}, {en:'bus', em:'🚌'},
       {en:'street', em:'🛣️'}, {en:'bridge', em:'🌉'}, {en:'sign', em:'🚸'},
       {en:'light', em:'🚦'}, {en:'tree', em:'🌳'}, {en:'dog', em:'🐶'},
-      {en:'friend', em:'🧑‍🤝‍🧑'}, {en:'park', em:'🏞️'}, {en:'ball', em:'⚽'}
+      {en:'friend', em:'🧑🏽‍🤝‍🧑🏼'}, {en:'park', em:'🏞️'}, {en:'ball', em:'⚽'}
     ]
   },
   {
-    id:3, name:'Montaña', sub:'Naturaleza y aventura', icon:'⛰️', color:'#C68642',
+    id:3, name:'Montañas Bogo', sub:'Naturaleza y aventura', icon:'⛰️', color:'#C68642',
     modes:['word2img','audio2img'],
     words:[
       {en:'mountain', em:'⛰️'}, {en:'rock', em:'🪨'}, {en:'forest', em:'🌲'},
@@ -362,44 +591,39 @@ const LEVELS = [
     ]
   },
   {
-    id:4, name:'Pista Velodromo', sub:'Acciones y frases', icon:'🏁', color:'#3E3A8C',
+    id:4, name:'Pista Velódromo 1 de mayo', sub:'Acciones y frases', icon:'🏁', color:'#3E3A8C',
     modes:['sentence'],
-    words:[
-      {en:'ride', em:'🚴'}, {en:'race', em:'🏁'}, {en:'brake', em:'🛑'},
-      {en:'turn', em:'↩️'}, {en:'jump', em:'🤸'}, {en:'climb', em:'🧗'},
-      {en:'wave', em:'👋'}, {en:'smile', em:'😊'}, {en:'drink', em:'🥤'},
-      {en:'rest', em:'🛌'}, {en:'win', em:'🏆'}, {en:'ring', em:'🔔'}
-    ],
+    words:[],
     sentences:[
-      {w:['I','ride','my','bike'], em:'🚴🚲'},
-      {w:['I','wear','a','helmet'], em:'🚴⛑️'},
-      {w:['I','ring','the','bell'], em:'🚴🔔'},
-      {w:['I','drink','water'], em:'🚴💧'},
-      {w:['the','bird','flies'], em:'🐦'},
-      {w:['I','climb','the','mountain'], em:'🧗⛰️'},
-      {w:['I','win','the','race'], em:'🚴🏆'},
-      {w:['we','ride','together'], em:'🧑‍🤝‍🧑🚲'},
+      {w:['I','ride','my','bike'], em:'🚴🏽‍♂️🚲'},
+      {w:['I','wear','a','helmet'], em:'🚴🏽‍♀️⛑️'},
+      {w:['I','ring','the','bell'], em:'🚴🏽‍♂️🔔'},
+      {w:['I','drink','water'], em:'🚴🏽‍♀️💧'},
+      {w:['The','bird','flies'], em:'🐦'},
+      {w:['I','climb','the','mountain'], em:'🧗🏽‍♀️⛰️'},
+      {w:['I','win','the','race'], em:'🚴🏽‍♂️🏆'},
+      {w:['We','ride','together'], em:'🧑🏽‍🤝‍🧑🏼🚲'},
       {w:['I','stop','at','the','sign'], em:'🚸🛑'},
-      {w:['the','sun','shines'], em:'☀️'},
-      {w:['I','cross','the','bridge'], em:'🚴🌉'},
+      {w:['The','sun','shines'], em:'☀️'},
+      {w:['I','cross','the','bridge'], em:'🚴🏽‍♂️🌉'},
       {w:['I','love','my','bicycle'], em:'🚲💛'}
     ]
   },
   {
-    id:5, name:'Gran Copa Bogofija', sub:'¡Repaso de todo!', icon:'🏆', color:'#FFD23F',
+    id:5, name:'Gran Copa BogoFija', sub:'¡Repaso de todo!', icon:'🏆', color:'#FFD23F',
     modes:['img2word','audio2img','word2img'],
     review:true,
     words:[
       {en:'helmet', em:'⛑️'}, {en:'bicycle', em:'🚲'}, {en:'bell', em:'🔔'},
       {en:'medal', em:'🏅'}, {en:'mountain', em:'⛰️'}, {en:'sun', em:'☀️'},
-      {en:'bird', em:'🐦'}, {en:'tree', em:'🌳'}, {en:'ride', em:'🚴'},
+      {en:'bird', em:'🐦'}, {en:'tree', em:'🌳'}, {en:'ride', em:'🚴🏽'},
       {en:'race', em:'🏁'}, {en:'water', em:'💧'}, {en:'trophy', em:'🏆'}
     ]
   }
 ];
 
 const CHARACTERS = [
-  {em:'🚴', name:'Explorador',      cost:0},
+  {em:'🚴🏽', name:'Explorador',      cost:0},
   {em:'🐇', name:'Conejo Veloz',    cost:15},
   {em:'🦊', name:'Zorro Ciclista',  cost:30},
   {em:'🐿️', name:'Ardilla Trail',   cost:45},
@@ -413,14 +637,36 @@ const CHARACTERS = [
 /* =========================================================
    ESTADO + GUARDADO
    ========================================================= */
-let S = { gems:0, stars:{}, seen:[] };
+let S = { gems:0, stars:{}, seen:[], firstTime:true };
 
 async function load(){
   try{
     const r = await window.storage.get('bwe-save');
-    if(r && r.value) S = Object.assign(S, JSON.parse(r.value));
-  }catch(e){ /* primera partida o sin storage: seguimos en memoria */ }
+    if(r && r.value) {
+      S = Object.assign(S, JSON.parse(r.value));
+      S.firstTime = false; // Si hay guardado, no es la primera vez
+    }
+  }catch(e){ console.log("Usando estado en memoria"); }
   render();
+  
+  // Mostrar tutorial en el home si es primera vez
+  if(S.firstTime) {
+    const btnPlay = $('#btn-play');
+    const hand = $('#tutorial-hand');
+    const rect = btnPlay.getBoundingClientRect();
+    const gameRect = $('#game').getBoundingClientRect();
+    
+    hand.style.display = 'block';
+    hand.style.top = (rect.top - gameRect.top + rect.height/2) + 'px';
+    hand.style.left = (rect.left - gameRect.left + rect.width/2 + 30) + 'px';
+    
+    // Ocultar al hacer clic
+    btnPlay.addEventListener('click', () => {
+      hand.style.display = 'none';
+      S.firstTime = false;
+      save();
+    }, {once: true});
+  }
 }
 async function save(){
   try{ await window.storage.set('bwe-save', JSON.stringify(S)); }catch(e){}
@@ -440,57 +686,92 @@ const show = id => {
 let voice = null;
 function pickVoice(){
   const vs = speechSynthesis.getVoices();
-  voice = vs.find(v=>/en[-_]US/i.test(v.lang)) || vs.find(v=>/^en/i.test(v.lang)) || null;
+  voice = vs.find(v=>/en[-_]US/i.test(v.lang) && /female/i.test(v.name)) || 
+          vs.find(v=>/en[-_]US/i.test(v.lang)) || 
+          vs.find(v=>/^en/i.test(v.lang)) || null;
 }
-if('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+if('speechSynthesis' in window){ 
+  pickVoice(); 
+  speechSynthesis.onvoiceschanged = pickVoice; 
+}
 function say(text){
   if(!('speechSynthesis' in window)) return;
   speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'en-US'; u.rate = .8; u.pitch = 1.05;
+  u.lang = 'en-US'; 
+  u.rate = 0.85; // Un poco más lento para niños
+  u.pitch = 1.1; // Tono ligeramente más agudo/amigable
   if(voice) u.voice = voice;
   speechSynthesis.speak(u);
 }
 
-/* ---- sonidos ---- */
+/* ---- sonidos (Sintetizador Básico) ---- */
 let ac = null;
-function beep(freqs, dur=.09){
+function beep(freqs, dur=0.1, type='square'){
   try{
     ac = ac || new (window.AudioContext||window.webkitAudioContext)();
     freqs.forEach((f,i)=>{
       const o = ac.createOscillator(), g = ac.createGain();
-      o.type='square'; o.frequency.value=f;
-      g.gain.value=.05;
+      o.type = type; o.frequency.value = f;
+      g.gain.value = 0.08; // Volumen general
       o.connect(g); g.connect(ac.destination);
       const t = ac.currentTime + i*dur;
-      o.start(t); g.gain.setValueAtTime(.05,t);
-      g.gain.exponentialRampToValueAtTime(.001, t+dur);
-      o.stop(t+dur);
+      o.start(t); 
+      g.gain.setValueAtTime(0.08, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      o.stop(t + dur);
     });
   }catch(e){}
 }
 
-/* ---- efectos ---- */
-function burst(el, color){
+// Funciones de sonido semánticas
+const playWinSound = () => beep([523.25, 659.25, 783.99, 1046.50], 0.1, 'sine'); // Arpegio C mayor
+const playWrongSound = () => beep([150, 100], 0.15, 'sawtooth');
+const playClickSound = () => beep([600], 0.05, 'sine');
+const playUnlockSound = () => beep([440, 554, 659, 880], 0.12, 'triangle');
+
+/* ---- efectos visuales ---- */
+function burst(el, baseColor){
   const fx = $('#fx'), r = el.getBoundingClientRect(), g = $('#game').getBoundingClientRect();
-  for(let i=0;i<18;i++){
+  const colors = [baseColor, '#FFFFFF', 'var(--gold)'];
+  
+  for(let i=0;i<20;i++){
     const p = document.createElement('div');
-    p.className='particle';
-    p.style.background = color;
-    p.style.left = (r.left - g.left + r.width/2) + 'px';
-    p.style.top  = (r.top  - g.top  + r.height/2) + 'px';
-    p.style.setProperty('--dx', (Math.random()*220-110)+'px');
-    p.style.setProperty('--dy', (Math.random()*220-110)+'px');
+    p.className = 'particle ' + (Math.random()>0.5 ? 'p-star' : 'p-circle');
+    
+    if(p.classList.contains('p-circle')){
+        p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    }
+    
+    p.style.left = (r.left - g.left + r.width/2 - 8) + 'px';
+    p.style.top  = (r.top  - g.top  + r.height/2 - 8) + 'px';
+    
+    const angle = Math.random() * Math.PI * 2;
+    const distance = 50 + Math.random() * 100;
+    p.style.setProperty('--dx', (Math.cos(angle) * distance) + 'px');
+    p.style.setProperty('--dy', (Math.sin(angle) * distance) + 'px');
+    p.style.setProperty('--rot', (Math.random() * 360) + 'deg');
+    
     fx.appendChild(p);
-    setTimeout(()=>p.remove(), 750);
+    setTimeout(()=>p.remove(), 800);
   }
 }
-function floater(text){
-  const fx = $('#fx'), d = document.createElement('div');
-  d.className='floater'; d.textContent=text;
-  d.style.left='50%'; d.style.top='45%'; d.style.transform='translateX(-50%)';
+
+function floater(text, el){
+  const fx = $('#fx');
+  const d = document.createElement('div');
+  d.className='floater'; d.innerHTML=text;
+  
+  if(el){
+    const r = el.getBoundingClientRect(), g = $('#game').getBoundingClientRect();
+    d.style.left = (r.left - g.left + r.width/2) + 'px';
+    d.style.top = (r.top - g.top) + 'px';
+  } else {
+    d.style.left='50%'; d.style.top='40%';
+  }
+  
   fx.appendChild(d);
-  setTimeout(()=>d.remove(), 1000);
+  setTimeout(()=>d.remove(), 1200);
 }
 
 /* =========================================================
@@ -514,9 +795,9 @@ function render(){
       <div class="info">
         <div class="nm">${L.name}</div>
         <div class="sub">${L.sub}</div>
-        <div class="stars">${'⭐'.repeat(st)}${'▫️'.repeat(3-st)}</div>
+        <div class="stars">${'⭐'.repeat(st)}${'<span style="opacity:0.3">⭐</span>'.repeat(3-st)}</div>
       </div>`;
-    if(prev) b.onclick = ()=>startLevel(L);
+    if(prev) b.onclick = ()=>{ playClickSound(); startLevel(L); };
     box.appendChild(b);
   });
 
@@ -528,8 +809,8 @@ function render(){
     d.className = 'char' + (on?'':' lock');
     d.innerHTML = `<div class="em">${on?c.em:'❓'}</div>
       <div class="cn">${on?c.name:'???'}</div>
-      ${on?'':`<div class="need">💎 ${c.cost}</div>`}`;
-    if(on) d.onclick = ()=>{ say(c.name); beep([600,900]); };
+      ${on?'':`<div class="need"><i class="fa-solid fa-gem"></i> ${c.cost}</div>`}`;
+    if(on) d.onclick = ()=>{ say(c.name); playClickSound(); };
     g.appendChild(d);
   });
 }
@@ -542,26 +823,32 @@ let game = null;
 function buildQueue(L){
   const q = [];
   if(L.modes.includes('sentence')){
-    shuffle(L.sentences).forEach(s => q.push({type:'sentence', data:s}));
+    shuffle(L.sentences).slice(0,10).forEach(s => q.push({type:'sentence', data:s})); // Max 10 por ronda
     return q;
   }
-  shuffle(L.words).forEach((w,i)=>{
+  
+  // Tomar hasta 10 palabras aleatorias del nivel
+  const pool = shuffle(L.words).slice(0, 10);
+  
+  pool.forEach((w,i)=>{
     const mode = L.modes[i % L.modes.length];
-    const pool = shuffle(L.words.filter(x=>x.en!==w.en)).slice(0,2);
-    q.push({type:mode, word:w, opts:shuffle([w, ...pool])});
+    const others = shuffle(L.words.filter(x=>x.en!==w.en)).slice(0,3); // 3 distractores
+    q.push({type:mode, word:w, opts:shuffle([w, ...others])});
   });
   return q;
 }
 
 function startLevel(L){
-  game = { L, queue:buildQueue(L), correct:0, errors:0, streak:0, total:12, current:null };
+  game = { L, queue:buildQueue(L), correct:0, errors:0, streak:0, total: 10, current:null };
   $('#streak-pill').style.display='none';
   show('play');
-  next();
+  
+  // Pequeño delay antes de la primera pregunta para que el UI asiente
+  setTimeout(next, 300);
 }
 
 function next(){
-  if(game.correct >= game.total){ return finish(); }
+  if(game.correct >= game.total || game.queue.length === 0){ return finish(); }
   game.current = game.queue.shift();
   drawProgress();
   drawQuestion();
@@ -590,24 +877,24 @@ function drawQuestion(){
   if(q.type==='img2word'){
     ore.textContent = q.word.em;
     st.appendChild(ore);
-    st.appendChild(hint('👆','Tocá la palabra correcta'));
+    st.appendChild(hint('👆🏽','Toca la palabra correcta'));
     q.opts.forEach(o => op.appendChild(mkOpt(o.en, false, o.en===q.word.en, ore)));
     say(q.word.en);
   }
   else if(q.type==='word2img'){
     ore.innerHTML = `<div class="word">${q.word.en}</div>`;
     st.appendChild(ore);
-    st.appendChild(hint('👆','Tocá el dibujo correcto'));
+    st.appendChild(hint('👆🏽','Toca el dibujo correcto'));
     q.opts.forEach(o => op.appendChild(mkOpt(o.em, true, o.en===q.word.en, ore)));
     say(q.word.en);
   }
   else if(q.type==='audio2img'){
     const sp = document.createElement('button');
-    sp.className='block speaker'; sp.textContent='🔊';
-    sp.onclick = ()=>say(q.word.en);
+    sp.className='block speaker'; sp.innerHTML='<i class="fa-solid fa-volume-high text-white"></i>';
+    sp.onclick = ()=>{ playClickSound(); say(q.word.en); };
     ore.appendChild(sp);
     st.appendChild(ore);
-    st.appendChild(hint('👂','Escuchá y elegí'));
+    st.appendChild(hint('👂🏽','Escucha y elige'));
     q.opts.forEach(o => op.appendChild(mkOpt(o.em, true, o.en===q.word.en, ore)));
     say(q.word.en);
   }
@@ -615,7 +902,7 @@ function drawQuestion(){
 
 function hint(icon, text){
   const d = document.createElement('div');
-  d.className='hint'; d.innerHTML = `<span style="font-size:22px">${icon}</span> ${text}`;
+  d.className='hint'; d.innerHTML = `<span>${icon}</span> <span>${text}</span>`;
   return d;
 }
 
@@ -635,17 +922,24 @@ function answer(btn, right, ore){
   }else{
     btn.classList.add('bad');
     ore.classList.add('shake');
-    beep([220,150], .14);
+    playWrongSound();
+    
     // mostrar la correcta en verde
     const q = game.current;
     document.querySelectorAll('.opt').forEach(o=>{
       const target = (q.type==='img2word') ? q.word.en : q.word.em;
       if(o.textContent === target){ o.classList.add('ok'); }
     });
+    
     say(q.word.en);
-    game.errors++; game.streak = 0; $('#streak-pill').style.display='none';
-    game.queue.push(q); // vuelve a aparecer para practicar
-    setTimeout(next, 1900);
+    game.errors++; 
+    game.streak = 0; 
+    $('#streak-pill').style.display='none';
+    
+    // Vuelve a meter la pregunta al final de la cola para repasarla
+    game.queue.push(q); 
+    
+    setTimeout(next, 2000);
   }
 }
 
@@ -659,13 +953,14 @@ function drawSentence(q){
   const ore = document.createElement('div');
   ore.className='oreblock';
   ore.style.background = game.L.color;
-  ore.style.width='auto'; ore.style.padding='0 26px'; ore.style.height='150px';
+  ore.style.width='90%'; ore.style.padding='0 26px'; ore.style.height='auto'; ore.style.minHeight='140px';
   ore.textContent = q.data.em;
   st.appendChild(ore);
 
   const sp = document.createElement('button');
-  sp.className='block btn-sec'; sp.textContent='🔊 Escuchar';
-  sp.onclick = ()=>say(target.join(' '));
+  sp.className='block btn-sec'; sp.innerHTML='<i class="fa-solid fa-volume-high"></i> Escuchar';
+  sp.style.margin = '-10px 0 10px 0';
+  sp.onclick = ()=>{ playClickSound(); say(target.join(' ')); };
   st.appendChild(sp);
 
   const slots = document.createElement('div'); slots.className='slots';
@@ -689,14 +984,18 @@ function drawSentence(q){
     b.onclick = ()=>{
       const pos = built.length;
       if(t.w === target[pos]){
-        built.push(t.w); b.classList.add('used'); paint(); beep([700+pos*90]);
+        built.push(t.w); 
+        b.classList.add('used'); 
+        paint(); 
+        beep([500 + pos*100], 0.08, 'sine'); // Escala musical al construir
+        
         if(built.length === target.length){
           tiles.querySelectorAll('.tile').forEach(x=>x.onclick=null);
           say(target.join(' '));
-          win(ore);
+          setTimeout(() => win(ore), 600); // Pequeña pausa para escuchar la frase
         }
       }else{
-        b.classList.add('bad'); ore.classList.add('shake'); beep([220,150],.14);
+        b.classList.add('bad'); ore.classList.add('shake'); playWrongSound();
         setTimeout(()=>{ b.classList.remove('bad'); ore.classList.remove('shake'); }, 500);
         game.streak = 0; $('#streak-pill').style.display='none';
       }
@@ -708,41 +1007,125 @@ function drawSentence(q){
 
 /* ---- acierto ---- */
 function win(ore){
-  beep([740,988,1319]);
+  playWinSound();
   ore.classList.add('pop');
   burst(ore, game.L.color);
-  game.correct++; game.streak++;
+  
+  game.correct++; 
+  game.streak++;
+  
   let gain = 2;
+  const streakPill = $('#streak-pill');
+  
   if(game.streak > 0 && game.streak % 3 === 0){
     gain += 3;
-    floater('🔥 +5');
-    $('#streak-pill').style.display='flex';
+    floater('🔥 +5 BONUS', ore);
+    streakPill.style.display='flex';
+    streakPill.classList.add('animate-bounce');
+    setTimeout(()=>streakPill.classList.remove('animate-bounce'), 1000);
   }else{
-    floater('💎 +2');
+    floater('<i class="fa-solid fa-gem text-gem"></i> +2', ore);
   }
-  if(game.streak >= 2){ $('#streak-pill').style.display='flex'; $('#streak').textContent = game.streak; }
+  
+  if(game.streak >= 2){ 
+    streakPill.style.display='flex'; 
+    $('#streak').textContent = game.streak; 
+  }
+  
   const before = unlockedCount();
   S.gems += gain;
   render(); save();
-  if(unlockedCount() > before) setTimeout(()=>newCharacter(CHARACTERS[unlockedCount()-1]), 900);
-  setTimeout(next, 950);
+  
+  if(unlockedCount() > before) {
+      setTimeout(()=>newCharacter(CHARACTERS[unlockedCount()-1]), 1000);
+  } else {
+      setTimeout(next, 1200); // Más tiempo para ver la animación
+  }
 }
 
 /* =========================================================
    FIN DE NIVEL / MODALES
    ========================================================= */
-function modal(html){ $('#modal-card').innerHTML = html; $('#modal').classList.add('active'); }
-function closeModal(){ $('#modal').classList.remove('active'); }
+function modal(html){ 
+    $('#modal-card').innerHTML = html; 
+    $('#modal').classList.add('active'); 
+}
+function closeModal(){ 
+    $('#modal').classList.remove('active'); 
+}
+
+/* ---- confeti de pantalla completa (fin del juego) ---- */
+function confettiBurstFullscreen(duration=5000, count=180){
+  const layer = document.createElement('div');
+  layer.className = 'confetti-layer';
+  document.body.appendChild(layer);
+  const colors = ['#FFD23F','#FF6B6B','#4CB8E8','#7ED957','#B983FF','#FF9F45','#FFFFFF'];
+  for(let i=0;i<count;i++){
+    const p = document.createElement('div');
+    p.className = 'confetti-piece' + (Math.random()>0.7 ? ' round' : '');
+    const size = 6 + Math.random()*9;
+    p.style.width = size + 'px';
+    p.style.height = (Math.random()>0.7 ? size : size*0.45) + 'px';
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+    p.style.left = Math.random()*100 + '%';
+    p.style.animationDuration = (2.6 + Math.random()*2.4) + 's';
+    p.style.animationDelay = (Math.random()*1.4) + 's';
+    p.style.setProperty('--rot', (Math.random()*720-360) + 'deg');
+    p.style.setProperty('--drift', (Math.random()*220-110) + 'px');
+    layer.appendChild(p);
+  }
+  setTimeout(()=>layer.remove(), duration + 3000);
+}
 
 function newCharacter(c){
-  beep([523,659,784,1047]);
+  playUnlockSound();
   modal(`
-    <h2>¡NUEVO COMPAÑERO!</h2>
-    <div style="font-size:80px" class="hero-guy">${c.em}</div>
-    <div style="font-family:var(--px);font-size:14px;margin-top:12px;color:#fff">${c.name}</div>
-    <div class="row"><button class="block btn-big" id="m1">¡GENIAL!</button></div>`);
-  say(c.name);
-  $('#m1').onclick = closeModal;
+    <h2>¡NUEVO COMPAÑERO DESBLOQUEADO!</h2>
+    <div style="font-size:90px; margin: 20px 0;" class="hero-guy">${c.em}</div>
+    <div style="font-family:var(--px);font-size:24px;font-weight:900;margin-top:12px;color:#fff">${c.name}</div>
+    <div class="row"><button class="block btn-big" id="m1" style="width:100%; justify-content:center;">¡GENIAL!</button></div>`);
+  say("New friend! " + c.name);
+  
+  // Efectos de confeti detrás del modal
+  burst(document.body, '#FFD700');
+  setTimeout(()=>burst(document.body, '#FF6B6B'), 300);
+  setTimeout(()=>burst(document.body, '#4CB8E8'), 600);
+  
+  $('#m1').onclick = () => {
+      closeModal();
+      playClickSound();
+      next(); // Continua el nivel después de celebrar
+  };
+}
+
+/* ---- premio final: código de descuento ---- */
+const REWARD_CODE = 'SuperBogoKids';
+function showReward(){
+  modal(`
+    <h2>🎁 ¡TU RECOMPENSA!</h2>
+    <p style="font-family:var(--body);font-weight:800;font-size:15px;line-height:1.5;margin:0 0 14px;">
+      Como premio por completar todas las rutas, aquí tienes un código de descuento exclusivo para usar en nuestra tienda:
+    </p>
+    <div class="reward-code" id="reward-code">${REWARD_CODE}</div>
+    <button class="block btn-sec" id="copy-code" style="margin-top:16px;width:100%;justify-content:center;">
+      <i class="fa-regular fa-copy"></i> Copiar código
+    </button>
+    <a href="https://bogofija.netlify.app/" target="_blank" rel="noopener noreferrer" class="block btn-big" style="margin-top:14px;width:100%;justify-content:center;text-decoration:none;">
+      <i class="fa-solid fa-arrow-up-right-from-square"></i> Ir a bogofija.netlify.app
+    </a>
+    <button class="block btn-sec" id="m-reward-map" style="margin-top:14px;width:100%;justify-content:center;background:linear-gradient(160deg,#9AA3AD,var(--stone-dark));">
+      <i class="fa-solid fa-map-location-dot"></i> Volver al mapa
+    </button>`);
+  const copyBtn = $('#copy-code');
+  copyBtn.onclick = async () => {
+    playClickSound();
+    try{
+      await navigator.clipboard.writeText(REWARD_CODE);
+      copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> ¡Copiado!';
+      setTimeout(()=>{ copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i> Copiar código'; }, 2000);
+    }catch(e){ /* clipboard no disponible: el código igual queda visible para copiar a mano */ }
+  };
+  $('#m-reward-map').onclick = ()=>{ playClickSound(); closeModal(); show('map'); };
 }
 
 function finish(){
@@ -750,86 +1133,104 @@ function finish(){
   if((S.stars[game.L.id]||0) < st) S.stars[game.L.id] = st;
   S.gems += 10;
   save(); render();
-  beep([523,659,784,1047,1319]);
+  
   const nextL = LEVELS.find(l => l.id === game.L.id+1);
+
+  if(!nextL){
+    // ¡JUEGO COMPLETO! Gran celebración con confeti a pantalla completa
+    confettiBurstFullscreen(6000, 220);
+    beep([523,659,784,1047,1319,1567,2093], 0.16, 'sine');
+    say("Congratulations! You are a BogoKids champion!");
+    modal(`
+      <h2>🏆 ¡CAMPEÓN BOGOKIDS!</h2>
+      <div style="font-size:76px; margin: 12px 0;" class="hero-guy">🎉</div>
+      <div class="big-stars">${'⭐'.repeat(st)}${'<span style="opacity:0.3">⭐</span>'.repeat(3-st)}</div>
+      <p style="font-family:var(--body);font-weight:900;font-size:17px;margin:10px 0 4px;">¡Completaste TODAS las rutas de BogoKids!</p>
+      <div class="row">
+        <button class="block btn-big" id="m-reward" style="width:100%;justify-content:center;">🎁 ¡Ver mi premio!</button>
+      </div>`);
+    $('#m-reward').onclick = ()=>{ playClickSound(); showReward(); };
+    return;
+  }
+
+  // Fanfarria de nivel
+  beep([523, 659, 784, 1047, 1319, 1567], 0.15, 'sine');
+  
   modal(`
     <h2>¡RUTA COMPLETADA!</h2>
-    <div style="font-size:64px">${game.L.icon}</div>
-    <div class="big-stars">${'⭐'.repeat(st)}${'▫️'.repeat(3-st)}</div>
-    <div style="font-weight:900;font-size:18px">💎 +10 gemas de premio</div>
-    ${nextL ? `<div style="font-size:15px;font-weight:800;margin-top:12px;opacity:.9">🔓 Se abrió: ${nextL.name}</div>` : `<div style="font-size:15px;font-weight:800;margin-top:12px">🏆 ¡Completaste todo el recorrido!</div>`}
+    <div style="font-size:70px; margin: 10px 0;">${game.L.icon}</div>
+    <div class="big-stars">${'⭐'.repeat(st)}${'<span style="opacity:0.3">⭐</span>'.repeat(3-st)}</div>
+    <div style="font-weight:900;font-size:20px; background:rgba(0,0,0,0.3); padding:10px; border-radius:12px;">
+      <i class="fa-solid fa-gem text-gem"></i> +10 gemas
+    </div>
+    <div style="font-size:16px;font-weight:800;margin-top:16px; color:var(--grass);">🔓 Se abrió: ${nextL.name}</div>
     <div class="row">
-      <button class="block btn-sec" id="m-again">🔁 Otra vez</button>
-      <button class="block btn-big" id="m-map">🗺️ Mapa</button>
+      <button class="block btn-sec" id="m-again"><i class="fa-solid fa-rotate-right"></i> Otra vez</button>
+      <button class="block btn-big" id="m-map"><i class="fa-solid fa-map-location-dot"></i> Mapa</button>
     </div>`);
-  $('#m-again').onclick = ()=>{ closeModal(); startLevel(game.L); };
-  $('#m-map').onclick  = ()=>{ closeModal(); show('map'); };
+    
+  $('#m-again').onclick = ()=>{ playClickSound(); closeModal(); startLevel(game.L); };
+  $('#m-map').onclick  = ()=>{ playClickSound(); closeModal(); show('map'); };
 }
 
 /* =========================================================
-   NAVEGACIÓN
+   NAVEGACIÓN E INICIALIZACIÓN
    ========================================================= */
-$('#btn-play').onclick      = ()=>{ show('map'); beep([600,800]); };
-$('#btn-chars').onclick     = ()=>show('chars');
-$('#btn-chars-home').onclick= ()=>show('chars');
-$('#chars-back').onclick    = ()=>show('map');
-$('#map-home').onclick      = ()=>show('home');
-$('#play-back').onclick     = ()=>{ speechSynthesis.cancel(); show('map'); };
+$('#btn-play').onclick      = ()=>{ playClickSound(); show('map'); };
+$('#btn-chars').onclick     = ()=>{ playClickSound(); show('chars'); };
+$('#btn-chars-home').onclick= ()=>{ playClickSound(); show('chars'); };
+$('#chars-back').onclick    = ()=>{ playClickSound(); show('map'); };
+$('#map-home').onclick      = ()=>{ playClickSound(); show('home'); };
+$('#play-back').onclick     = ()=>{ playClickSound(); speechSynthesis.cancel(); show('map'); };
 $('#btn-repeat').onclick    = ()=>{
+  playClickSound();
   const q = game && game.current;
   if(!q) return;
   say(q.type==='sentence' ? q.data.w.join(' ') : q.word.en);
 };
 
+// Evitar zoom en doble tap (iOS)
+document.addEventListener('dblclick', function(event) {
+  event.preventDefault();
+}, { passive: false });
+
 load();
 })();
 </script>
 
-<footer class="py-12 px-6 bg-black border-t border-zinc-900 text-center relative z-10">
-        <!-- Contenedor horizontal para los logotipos de la familia BOGO -->
-        <div class="flex flex-wrap items-center justify-center gap-6 md:gap-8 mb-8 max-w-3xl mx-auto">
-            <a href="https://www.instagram.com/bogofija/" target="_blank" rel="noopener noreferrer" class="hover:opacity-100 transition-all">
-                <img src="https://i.ibb.co/99R1NsRX/Logo-Bogofija-2021.png" alt="Bogofija" class="h-8 md:h-10 w-auto object-contain opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all">
-            </a>
-            <a href="https://bogochicas.netlify.app/" target="_blank" rel="noopener noreferrer" class="hover:opacity-100 transition-all">
-                <img src="https://i.ibb.co/qLYvYCrT/Logotipos-Eventos.png" alt="Bogochicas" class="h-8 md:h-10 w-auto object-contain opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
-            </a>
-            <a href="https://bogoruta.netlify.app/" target="_blank" rel="noopener noreferrer" class="hover:opacity-100 transition-all">
-                <img src="https://i.ibb.co/cK1KpZbK/bogoruta.png" alt="Bogoruta" class="h-8 md:h-10 w-auto object-contain opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
-            </a>
-            <a href="https://bogomtb.netlify.app/" target="_blank" rel="noopener noreferrer" class="hover:opacity-100 transition-all">
-                <img src="https://i.ibb.co/Q3FqNsjH/bogo-MTB.png" alt="Bogo MTB" class="h-8 md:h-10 w-auto object-contain opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
-            </a>
-            <a href="https://www.instagram.com/bogopublica/" target="_blank" rel="noopener noreferrer" class="hover:opacity-100 transition-all">
-                <img src="https://i.ibb.co/mCWrvnXQ/logo-Bogo-Publica.png" alt="Bogo Pública" class="h-8 md:h-10 w-auto object-contain opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
-            </a>
-            <a href="https://www.instagram.com/bogofixie/" target="_blank" rel="noopener noreferrer" class="hover:opacity-100 transition-all">
-                <img src="https://i.ibb.co/RGSwjNpd/bogofixie.png" alt="Bogo Fixie" class="h-8 md:h-10 w-auto object-contain opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all" />
-            </a>
-        </div>
-        
-        <!-- Ubicación y Correo -->
-        <p class="text-zinc-500 text-sm mb-2 font-medium">Bogotá, Colombia</p>
-        <a href="mailto:bogofija@gmail.com" class="text-zinc-300 hover:text-brand-yellow font-bold block mb-8 transition-colors">bogofija@gmail.com</a>
-        
-        <!-- REDES SOCIALES -->
-        <div class="flex justify-center items-center gap-6 mb-8">
-            <a href="https://www.tiktok.com/@bogofija" target="_blank" rel="noopener noreferrer" class="text-zinc-600 hover:text-white text-xl transition-colors" aria-label="TikTok">
-                <i class="fa-brands fa-tiktok"></i>
-            </a>
-            <a href="https://www.strava.com/clubs/bogofija" target="_blank" rel="noopener noreferrer" class="text-zinc-600 hover:text-white text-xl transition-colors" aria-label="Strava">
-                <i class="fa-brands fa-strava"></i>
-            </a>
-            <a href="https://www.instagram.com/bogofija/" target="_blank" rel="noopener noreferrer" class="text-zinc-600 hover:text-white text-xl transition-colors" aria-label="Instagram">
-                <i class="fa-brands fa-instagram"></i>
-            </a>
-            <a href="https://www.youtube.com/channel/UCi5ZT2D3YvF3M3_dDLtwVXg" target="_blank" rel="noopener noreferrer" class="text-zinc-600 hover:text-white text-xl transition-colors" aria-label="YouTube">
-                <i class="fa-brands fa-youtube"></i>
-            </a>
-        </div>
-        
-        <!-- Copyright -->
-        <p class="text-zinc-700 text-[10px] font-bold tracking-widest uppercase">&copy; 2020 by BOGOFIJA</p>
-    </footer>
+<footer class="footer-bogo py-10 px-6 text-center relative z-10 w-full mt-auto">
+    <div class="flex flex-wrap items-center justify-center gap-6 md:gap-8 mb-8 max-w-3xl mx-auto">
+        <a href="https://www.instagram.com/bogofija/" target="_blank" rel="noopener noreferrer" class="hover:opacity-100 transition-all">
+            <img src="https://i.ibb.co/99R1NsRX/Logo-Bogofija-2021.png" alt="Bogofija" class="h-8 md:h-10 w-auto object-contain opacity-70 hover:opacity-100 transition-all">
+        </a>
+        <a href="https://bogochicas.netlify.app/" target="_blank" rel="noopener noreferrer" class="hover:opacity-100 transition-all">
+            <img src="https://i.ibb.co/qLYvYCrT/Logotipos-Eventos.png" alt="Bogochicas" class="h-8 md:h-10 w-auto object-contain opacity-70 hover:opacity-100 transition-all" />
+        </a>
+        <a href="https://bogoruta.netlify.app/" target="_blank" rel="noopener noreferrer" class="hover:opacity-100 transition-all">
+            <img src="https://i.ibb.co/cK1KpZbK/bogoruta.png" alt="Bogoruta" class="h-8 md:h-10 w-auto object-contain opacity-70 hover:opacity-100 transition-all" />
+        </a>
+        <a href="https://bogomtb.netlify.app/" target="_blank" rel="noopener noreferrer" class="hover:opacity-100 transition-all">
+            <img src="https://i.ibb.co/Q3FqNsjH/bogo-MTB.png" alt="Bogo MTB" class="h-8 md:h-10 w-auto object-contain opacity-70 hover:opacity-100 transition-all" />
+        </a>
+        <a href="https://www.instagram.com/bogopublica/" target="_blank" rel="noopener noreferrer" class="hover:opacity-100 transition-all">
+            <img src="https://i.ibb.co/mCWrvnXQ/logo-Bogo-Publica.png" alt="Bogo Pública" class="h-8 md:h-10 w-auto object-contain opacity-70 hover:opacity-100 transition-all" />
+        </a>
+        <a href="https://www.instagram.com/bogofixie/" target="_blank" rel="noopener noreferrer" class="hover:opacity-100 transition-all">
+            <img src="https://i.ibb.co/RGSwjNpd/bogofixie.png" alt="Bogo Fixie" class="h-8 md:h-10 w-auto object-contain opacity-70 hover:opacity-100 transition-all" />
+        </a>
+    </div>
+    
+    <p class="text-white/80 text-sm mb-2 font-bold">Bogotá, Colombia</p>
+    <a href="mailto:bogofija@gmail.com" class="text-white hover:text-brand-yellow font-black block mb-8 transition-colors">bogofija@gmail.com</a>
+    
+    <div class="flex justify-center items-center gap-6 mb-8">
+        <a href="https://www.tiktok.com/@bogofija" target="_blank" rel="noopener noreferrer" class="text-white/70 hover:text-brand-yellow text-xl transition-colors" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+        <a href="https://www.strava.com/clubs/bogofija" target="_blank" rel="noopener noreferrer" class="text-white/70 hover:text-brand-yellow text-xl transition-colors" aria-label="Strava"><i class="fa-brands fa-strava"></i></a>
+        <a href="https://www.instagram.com/bogofija/" target="_blank" rel="noopener noreferrer" class="text-white/70 hover:text-brand-yellow text-xl transition-colors" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://www.youtube.com/channel/UCi5ZT2D3YvF3M3_dDLtwVXg" target="_blank" rel="noopener noreferrer" class="text-white/70 hover:text-brand-yellow text-xl transition-colors" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+    </div>
+    
+    <p class="text-white/50 text-[10px] font-bold tracking-widest uppercase">&copy; 2020 by BOGOFIJA</p>
+</footer>
 </body>
 </html>
